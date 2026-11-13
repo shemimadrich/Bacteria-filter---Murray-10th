@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Murray's Bacteriology Navigator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+
+  <!-- Header -->
+  <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 sticky top-0 z-20 flex flex-wrap justify-between items-center gap-4">
+    <div>
+      <h1 class="text-xl font-bold text-teal-400">Medical Bacteriology Diagnostic Navigator</h1>
+      <p class="text-xs text-slate-400">Multi-Path Differential & Identification Engine (Murray's Medical Microbiology)</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <input id="search-input" type="text" placeholder="Search bacteria or trigger words..." 
+        class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 w-64">
+      <button onclick="resetFilters()" class="bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+        Reset Filters
+      </button>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- Left Column: Interactive Criteria Filters -->
+    <aside class="lg:col-span-4 space-y-4">
+      <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400">Diagnostic Criteria</h2>
+          <span id="active-count" class="text-xs bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded-full">0 selected</span>
+        </div>
+        <div id="filter-container" class="space-y-5"></div>
+      </div>
+    </aside>
+
+    <!-- Right Column: Bacteria Pool & Detail Modal -->
+    <main class="lg:col-span-8 space-y-4">
+      <!-- Active Filter Pills -->
+      <div id="active-pills" class="flex flex-wrap gap-2 empty:hidden"></div>
+
+      <!-- Results Counter -->
+      <div class="flex justify-between items-center">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400">
+          Candidate Pathogens (<span id="match-count" class="text-teal-400">0</span>)
+        </h2>
+        <span class="text-xs text-slate-400">Click any pathogen to open full textbook profile</span>
+      </div>
+
+      <!-- Bacteria Grid -->
+      <div id="bacteria-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+      <!-- Detailed Profile Panel -->
+      <div id="detail-panel" class="hidden bg-slate-800 border-2 border-teal-500/60 rounded-xl p-6 space-y-4 shadow-2xl"></div>
+    </main>
+  </div>
+
+  <script>
+    const filterCategories = [
+      { id: "gram", label: "Staining & Cell Wall", options: ["Gram-Positive", "Gram-Negative", "Acid-Fast", "Wall-Less"] },
+      { id: "shape", label: "Morphology", options: ["Cocci (Clusters)", "Cocci (Chains/Pairs)", "Rods (Bacilli)", "Curved / Spiral", "Coccobacilli"] },
+      { id: "oxygen", label: "Oxygen & Growth", options: ["Aerobe / Facultative", "Obligate Anaerobe", "Microaerophilic", "Intracellular", "Spore-Forming"] },
+      { id: "biochem", label: "Key Lab & Biochemical Markers", options: ["Catalase (+)", "Catalase (-)", "Coagulase (+)", "Oxidase (+)", "Beta-Hemolytic", "Tumbling Motility", "Cold Enrichment"] },
+      { id: "syndrome", label: "Primary Clinical Syndromes", options: ["Skin / Soft Tissue / Abscess", "Pneumonia / Respiratory", "Meningitis / CNS", "Gastroenteritis / Foodborne", "Sepsis / Endocarditis", "Atypical Pneumonia"] }
+    ];
+
+    const bacteriaDB = [
+      {
+        id: "staph_aureus",
+        name: "Staphylococcus aureus",
+        chapter: "Ch. 17: Staphylococcus and Related Gram-Positive Cocci",
+        tags: ["Gram-Positive", "Cocci (Clusters)", "Aerobe / Facultative", "Catalase (+)", "Coagulase (+)", "Beta-Hemolytic", "Skin / Soft Tissue / Abscess", "Pneumonia / Respiratory", "Sepsis / Endocarditis", "Gastroenteritis / Foodborne"],
+        triggerWords: ["Coagulase", "Cytotoxins", "Exfoliative toxins", "Enterotoxins", "TSST-1", "MRSA", "Protein A"],
+        virulence: "Grape-like clusters with thick peptidoglycan and Protein A (binds Fc receptor of IgG to block opsonization). Produces alpha/beta/gamma/Panton-Valentine leukocidin cytotoxins, exfoliative toxins A/B (SSSS), heat-stable enterotoxins, and superantigen TSST-1.",
+        diseases: "Toxin-mediated (Scalded skin syndrome, Toxic shock syndrome, rapid-onset food poisoning); Suppurative (Impetigo, folliculitis, carbuncles, wound infections, bacteremia, endocarditis, osteomyelitis, septic arthritis, empyema).",
+        diagnosis: "Microscopy useful for pyogenic abscesses (not blood/food). Grows rapidly on nonselective sheep blood agar (golden-yellow colonies due to carotenoid pigment, beta-hemolysis) and selective mannitol salt agar (ferments mannitol). Positive catalase and coagulase tests; MALDI-TOF or NAAT for MRSA (mecA/mecC).",
+        treatment: "Incision and drainage for localized abscesses. Oral therapy: TMP-SMX, doxycycline, clindamycin, or linezolid. Serious systemic MRSA infections require intravenous vancomycin, daptomycin, or ceftaroline."
+      },
+      {
+        id: "listeria_mono",
+        name: "Listeria monocytogenes",
+        chapter: "Ch. 20: Listeria and Related Gram-Positive Bacteria",
+        tags: ["Gram-Positive", "Rods (Bacilli)", "Coccobacilli", "Aerobe / Facultative", "Intracellular", "Catalase (+)", "Beta-Hemolytic", "Tumbling Motility", "Cold Enrichment", "Meningitis / CNS", "Gastroenteritis / Foodborne", "Sepsis / Endocarditis"],
+        triggerWords: ["Cold enrichment", "Tumbling motility", "Intracellular", "Listeriolysin O", "ActA", "Unpasteurized dairy", "Neonatal meningitis"],
+        virulence: "Facultative intracellular pathogen. Internalins mediate entry; Listeriolysin O (LLO) and phospholipases C lyse the phagolysosome at acidic pH; ActA coordinates host actin polymerization to propel bacteria cell-to-cell via filopodia, evading humoral immunity.",
+        diseases: "Neonatal disease (early-onset granulomatosis infantiseptica; late-onset meningitis with septicemia); Meningitis and primary bacteremia in pregnant women, transplant recipients, patients on TNF-alpha inhibitors, and older adults; self-limited febrile gastroenteritis.",
+        diagnosis: "CSF Gram stain is frequently negative (<10^4 bacteria/mL) or shows intracellular/extracellular Gram-positive coccobacilli (can mimic S. pneumoniae). Grows at 4°C (cold enrichment), exhibits weak beta-hemolysis on sheep blood agar, positive CAMP test, and characteristic tumbling motility at 25°C.",
+        treatment: "Ampicillin (alone or combined with gentamicin for severe infections) is the treatment of choice. Naturally resistant to cephalosporins! TMP-SMX or erythromycin used in penicillin-allergic patients."
+      },
+      {
+        id: "campylobacter_jejuni",
+        name: "Campylobacter jejuni",
+        chapter: "Ch. 27: Campylobacter and Helicobacter",
+        tags: ["Gram-Negative", "Curved / Spiral", "Microaerophilic", "Catalase (+)", "Oxidase (+)", "Gastroenteritis / Foodborne"],
+        triggerWords: ["Curved Gram-negative rod", "Microaerophilic", "42°C growth", "Poultry", "Guillain-Barré syndrome", "Reactive arthritis"],
+        virulence: "Thin, comma- or S-shaped rods with polar flagella. Adhesins, cytotoxic enzymes, and enterotoxins mediate mucosal invasion and ulceration of the jejunum, ileum, and colon. Sialylated lipooligosaccharides (LOS) mimic human gangliosides (molecular mimicry).",
+        diseases: "Acute enteritis with cramping abdominal pain, malaise, fever, and bloody/mucoid diarrhea (10+ stools/day; can mimic acute appendicitis). Post-infectious autoimmune complications: Guillain-Barré syndrome (cross-reactive antibodies to peripheral neural gangliosides) and reactive arthritis.",
+        diagnosis: "Gram stain insensitive due to thin morphology, though 'gull-wing' rods may be seen. Requires microaerophilic atmosphere (5%-7% O2, 5%-10% CO2) and selective agar incubated at 40°C-42°C for 48+ hours. Stool antigen tests and multiplex enteric NAAT panels are highly sensitive.",
+        treatment: "Self-limited gastroenteritis managed with fluid and electrolyte replacement. Severe enteritis or septicemia treated with azithromycin (drug of choice); fluoroquinolones used as secondary option due to rising resistance."
+      },
+      {
+        id: "clostridioides_difficile",
+        name: "Clostridioides difficile",
+        chapter: "Ch. 29: Clostridium and Clostridioides",
+        tags: ["Gram-Positive", "Rods (Bacilli)", "Obligate Anaerobe", "Spore-Forming", "Catalase (-)", "Gastroenteritis / Foodborne"],
+        triggerWords: ["Antibiotic-associated diarrhea", "Pseudomembranous colitis", "Enterotoxin A", "Cytotoxin B", "Spores", "NAAT / GDH"],
+        virulence: "Strict anaerobic, spore-forming rod. Produces Enterotoxin A (chemotactic for neutrophils, disrupts tight junctions causing fluid hypersecretion) and Cytotoxin B (depolymerizes actin cytoskeleton, destroying enterocytes and forming pseudomembranes). Highly resistant spores persist on hospital surfaces.",
+        diseases: "Spectrum ranges from self-limited antibiotic-associated diarrhea (triggered by clindamycin, cephalosporins, penicillins, fluoroquinolones) to life-threatening pseudomembranous colitis and toxic megacolon.",
+        diagnosis: "Stool microscopy and routine culture alone are non-diagnostic because non-toxigenic colonization occurs. Two-step algorithm: screen with Glutamate Dehydrogenase (GDH) antigen or NAAT for toxin genes, combined with immunoassay for free Toxin A/B in stool to confirm active disease.",
+        treatment: "Discontinue the offending broad-spectrum antibiotic. Oral vancomycin or fidaxomicin for initial and severe episodes; fecal microbiota transplantation (FMT) or bezlotoxumab for multiply recurrent disease. Avoid alcohol-based hand rubs (ineffective against spores—use soap and water)."
+      },
+      {
+        id: "mycoplasma_pneumoniae",
+        name: "Mycoplasma pneumoniae",
+        chapter: "Ch. 32: Mycoplasma",
+        tags: ["Wall-Less", "Aerobe / Facultative", "Atypical Pneumonia", "Pneumonia / Respiratory"],
+        triggerWords: ["No cell wall", "Sterols in membrane", "P1 adhesin", "CARDS toxin", "Walking pneumonia", "Cold agglutinins"],
+        virulence: "Smallest free-living bacterium; lacks a peptidoglycan cell wall and incorporates host sterols into its trilaminar cell membrane. P1 adhesin binds sialylated glycoprotein receptors at the base of respiratory epithelial cilia, causing ciliostasis and sloughing. Produces CARDS toxin (ADP-ribosylating/vacuolating toxin).",
+        diseases: "Tracheobronchitis, pharyngitis, and atypical 'walking' bronchopneumonia with persistent dry hacking cough (especially in school-aged children and young adults). Extrapulmonary sequelae include Stevens-Johnson syndrome, erythema multiforme, hemolytic anemia (IgM cold agglutinins to I antigen), and meningoencephalitis.",
+        diagnosis: "Microscopy is useless (absence of cell wall prevents Gram staining). Culture is slow (takes weeks; 'fried-egg' colonies). Multiplex respiratory NAAT (PCR) is the diagnostic test of choice, supplemented by IgM/IgG serology.",
+        treatment: "Intrinsically resistant to all beta-lactams, vancomycin, and sulfonamides. Treated with macrolides (azithromycin), tetracyclines (doxycycline), or respiratory fluoroquinolones (levofloxacin)."
+      }
+    ];
+
+    let activeFilters = new Set();
+    let searchQuery = "";
+    let selectedBacteriumId = null;
+
+    function init() {
+      document.getElementById("search-input").addEventListener("input", (e) => {
+        searchQuery = e.target.value.toLowerCase();
+        render();
+      });
+      render();
+    }
+
+    function toggleFilter(tag) {
+      if (activeFilters.has(tag)) activeFilters.delete(tag);
+      else activeFilters.add(tag);
+      render();
+    }
+
+    function resetFilters() {
+      activeFilters.clear();
+      searchQuery = "";
+      selectedBacteriumId = null;
+      document.getElementById("search-input").value = "";
+      render();
+    }
+
+    function getMatchingBacteria(testFilters = activeFilters) {
+      return bacteriaDB.filter(b => {
+        const matchesTags = [...testFilters].every(tag => b.tags.includes(tag));
+        const matchesSearch = !searchQuery || 
+          b.name.toLowerCase().includes(searchQuery) ||
+          b.triggerWords.some(tw => tw.toLowerCase().includes(searchQuery)) ||
+          b.diseases.toLowerCase().includes(searchQuery);
+        return matchesTags && matchesSearch;
+      });
+    }
+
+    function selectBacterium(id) {
+      selectedBacteriumId = id;
+      renderDetail();
+      document.getElementById("detail-panel").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function render() {
+      const matching = getMatchingBacteria();
+      document.getElementById("active-count").textContent = `${activeFilters.size} selected`;
+      document.getElementById("match-count").textContent = matching.length;
+
+      // Render Active Pills
+      const pillsContainer = document.getElementById("active-pills");
+      pillsContainer.innerHTML = [...activeFilters].map(tag => `
+        <button onclick="toggleFilter('${tag}')" class="bg-teal-500/20 border border-teal-500/40 text-teal-200 text-xs px-3 py-1 rounded-full flex items-center gap-1.5 hover:bg-teal-500/30">
+          <span>${tag}</span>
+          <span class="font-bold">×</span>
+        </button>
+      `).join("");
+
+      // Render Filter Sidebar (with viable path checking)
+      const filterContainer = document.getElementById("filter-container");
+      filterContainer.innerHTML = filterCategories.map(cat => `
+        <div>
+          <h3 class="text-xs font-semibold text-slate-400 mb-2">${cat.label}</h3>
+          <div class="flex flex-wrap gap-1.5">
+            ${cat.options.map(opt => {
+              const isSelected = activeFilters.has(opt);
+              const hypothetical = new Set(activeFilters);
+              hypothetical.add(opt);
+              const countIfClicked = getMatchingBacteria(hypothetical).length;
+              const isViable = isSelected || countIfClicked > 0;
+
+              let btnClass = "bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500";
+              if (isSelected) btnClass = "bg-teal-600 border-teal-400 text-white font-medium shadow";
+              else if (!isViable) btnClass = "bg-slate-900/40 border-slate-800 text-slate-600 cursor-not-allowed";
+
+              return `
+                <button ${!isViable ? "disabled" : ""} onclick="toggleFilter('${opt}')"
+                  class="border text-xs px-2.5 py-1 rounded-lg transition flex items-center gap-1 ${btnClass}">
+                  <span>${opt}</span>
+                  <span class="text-[10px] opacity-70">(${isSelected ? matching.length : countIfClicked})</span>
+                </button>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `).join("");
+
+      // Render Bacteria Cards
+      const grid = document.getElementById("bacteria-grid");
+      if (matching.length === 0) {
+        grid.innerHTML = `<div class="col-span-2 bg-slate-800 border border-slate-700 rounded-xl p-8 text-center text-slate-400">No bacteria match all selected criteria. Remove a filter or reset.</div>`;
+      } else {
+        grid.innerHTML = matching.map(b => `
+          <div onclick="selectBacterium('${b.id}')" 
+            class="cursor-pointer bg-slate-800 hover:bg-slate-750 border ${selectedBacteriumId === b.id ? 'border-teal-400 ring-1 ring-teal-400' : 'border-slate-700 hover:border-slate-500'} rounded-xl p-4 transition flex flex-col justify-between">
+            <div>
+              <div class="text-[11px] text-teal-400 font-medium mb-1">${b.chapter}</div>
+              <h3 class="text-lg font-bold italic text-white mb-2">${b.name}</h3>
+              <div class="flex flex-wrap gap-1 mb-3">
+                ${b.triggerWords.map(tw => `<span class="bg-slate-900 text-amber-300/90 border border-amber-500/20 text-[11px] px-2 py-0.5 rounded">${tw}</span>`).join("")}
+              </div>
+            </div>
+            <div class="text-xs text-slate-400 border-t border-slate-700/60 pt-2 flex justify-between items-center">
+              <span>${b.tags.slice(0, 3).join(" • ")}</span>
+              <span class="text-teal-400 font-semibold">View Profile →</span>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      if (matching.length === 1) {
+        selectedBacteriumId = matching[0].id;
+      }
+      renderDetail();
+    }
+
+    function renderDetail() {
+      const panel = document.getElementById("detail-panel");
+      const b = bacteriaDB.find(x => x.id === selectedBacteriumId);
+      if (!b) {
+        panel.classList.add("hidden");
+        return;
+      }
+      panel.classList.remove("hidden");
+      panel.innerHTML = `
+        <div class="flex justify-between items-start border-b border-slate-700 pb-3">
+          <div>
+            <span class="text-xs text-teal-400 font-semibold uppercase">${b.chapter}</span>
+            <h2 class="text-2xl font-bold italic text-white">${b.name}</h2>
+          </div>
+          <button onclick="selectedBacteriumId=null; renderDetail();" class="text-slate-400 hover:text-white text-sm px-2 py-1">Close ✕</button>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          ${b.tags.map(t => `<span class="bg-teal-500/10 border border-teal-500/30 text-teal-300 text-xs px-2.5 py-0.5 rounded-full">${t}</span>`).join("")}
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div class="bg-slate-900/70 p-3.5 rounded-lg border border-slate-700/80">
+            <h4 class="text-xs font-bold uppercase text-amber-400 mb-1">Biology & Virulence Mechanisms</h4>
+            <p class="text-slate-300 leading-relaxed">${b.virulence}</p>
+          </div>
+          <div class="bg-slate-900/70 p-3.5 rounded-lg border border-slate-700/80">
+            <h4 class="text-xs font-bold uppercase text-rose-400 mb-1">Clinical Diseases</h4>
+            <p class="text-slate-300 leading-relaxed">${b.diseases}</p>
+          </div>
+          <div class="bg-slate-900/70 p-3.5 rounded-lg border border-slate-700/80">
+            <h4 class="text-xs font-bold uppercase text-sky-400 mb-1">Laboratory Diagnosis</h4>
+            <p class="text-slate-300 leading-relaxed">${b.diagnosis}</p>
+          </div>
+          <div class="bg-slate-900/70 p-3.5 rounded-lg border border-slate-700/80">
+            <h4 class="text-xs font-bold uppercase text-emerald-400 mb-1">Treatment & Control</h4>
+            <p class="text-slate-300 leading-relaxed">${b.treatment}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    init();
+  </script>
+</body>
+</html>
