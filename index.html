@@ -5,134 +5,225 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Murray's Bacteriology Navigator</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Global Database Array - Chapter files automatically plug into this!
+    window.BACTERIA_DB = [];
+  </script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
 
   <!-- Header -->
-  <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 sticky top-0 z-20 flex flex-wrap justify-between items-center gap-4">
+  <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 sticky top-0 z-20 flex flex-wrap justify-between items-center gap-4 shadow-lg">
     <div>
       <h1 class="text-xl font-bold text-teal-400">Medical Bacteriology Diagnostic Navigator</h1>
-      <p class="text-xs text-slate-400">Multi-Path Differential & Identification Engine (Murray's Medical Microbiology)</p>
+      <p class="text-xs text-slate-400">Modular Multi-Path Differential Engine (Murray's Medical Microbiology)</p>
     </div>
     <div class="flex items-center gap-3">
-      <input id="search-input" type="text" placeholder="Search bacteria or trigger words..." 
-        class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 w-64">
+      <input id="search-input" type="text" placeholder="Search bacteria, toxins, diseases..." 
+        class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 w-72">
       <button onclick="resetFilters()" class="bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 px-3 py-1.5 rounded-lg text-sm font-medium transition">
-        Reset Filters
+        Reset All
       </button>
     </div>
   </header>
 
   <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
     
-    <!-- Left Column: Interactive Criteria Filters -->
-    <aside class="lg:col-span-4 space-y-4">
+    <!-- Left Column: 10 Collapsible Master Categories -->
+    <aside class="lg:col-span-5 xl:col-span-4 space-y-3">
       <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
         <div class="flex justify-between items-center mb-3">
-          <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400">Diagnostic Criteria</h2>
-          <span id="active-count" class="text-xs bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded-full">0 selected</span>
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-300">Diagnostic Criteria</h2>
+          <span id="active-count" class="text-xs bg-teal-500/20 text-teal-300 px-2.5 py-0.5 rounded-full font-medium">0 selected</span>
         </div>
-        <div id="filter-container" class="space-y-5"></div>
+        <p class="text-xs text-slate-400 mb-4">Click any category below to expand options. Incompatible paths automatically grey out.</p>
+        <div id="filter-container" class="space-y-2"></div>
       </div>
     </aside>
 
-    <!-- Right Column: Bacteria Pool & Detail Modal -->
-    <main class="lg:col-span-8 space-y-4">
+    <!-- Right Column: Bacteria Pool & Detail View -->
+    <main class="lg:col-span-7 xl:col-span-8 space-y-4">
       <!-- Active Filter Pills -->
-      <div id="active-pills" class="flex flex-wrap gap-2 empty:hidden"></div>
+      <div id="active-pills" class="flex flex-wrap gap-2 empty:hidden bg-slate-800/60 p-3 rounded-xl border border-slate-700"></div>
+
+      <!-- Detailed Profile Panel (Shows at top when clicked) -->
+      <div id="detail-panel" class="hidden bg-slate-800 border-2 border-teal-500/70 rounded-xl p-6 space-y-4 shadow-2xl"></div>
 
       <!-- Results Counter -->
-      <div class="flex justify-between items-center">
+      <div class="flex justify-between items-center pt-1">
         <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400">
           Candidate Pathogens (<span id="match-count" class="text-teal-400">0</span>)
         </h2>
-        <span class="text-xs text-slate-400">Click any pathogen to open full textbook profile</span>
+        <span class="text-xs text-slate-400">Click any card to open full profile</span>
       </div>
 
       <!-- Bacteria Grid -->
       <div id="bacteria-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-
-      <!-- Detailed Profile Panel -->
-      <div id="detail-panel" class="hidden bg-slate-800 border-2 border-teal-500/60 rounded-xl p-6 space-y-4 shadow-2xl"></div>
     </main>
   </div>
 
   <script>
+    // 10-Category Master Taxonomy
     const filterCategories = [
-      { id: "gram", label: "Staining & Cell Wall", options: ["Gram-Positive", "Gram-Negative", "Acid-Fast", "Wall-Less"] },
-      { id: "shape", label: "Morphology", options: ["Cocci (Clusters)", "Cocci (Chains/Pairs)", "Rods (Bacilli)", "Curved / Spiral", "Coccobacilli"] },
-      { id: "oxygen", label: "Oxygen & Growth", options: ["Aerobe / Facultative", "Obligate Anaerobe", "Microaerophilic", "Intracellular", "Spore-Forming"] },
-      { id: "biochem", label: "Key Lab & Biochemical Markers", options: ["Catalase (+)", "Catalase (-)", "Coagulase (+)", "Oxidase (+)", "Beta-Hemolytic", "Tumbling Motility", "Cold Enrichment"] },
-      { id: "syndrome", label: "Primary Clinical Syndromes", options: ["Skin / Soft Tissue / Abscess", "Pneumonia / Respiratory", "Meningitis / CNS", "Gastroenteritis / Foodborne", "Sepsis / Endocarditis", "Atypical Pneumonia"] }
-    ];
-
-    const bacteriaDB = [
       {
-        id: "staph_aureus",
-        name: "Staphylococcus aureus",
-        chapter: "Ch. 17: Staphylococcus and Related Gram-Positive Cocci",
-        tags: ["Gram-Positive", "Cocci (Clusters)", "Aerobe / Facultative", "Catalase (+)", "Coagulase (+)", "Beta-Hemolytic", "Skin / Soft Tissue / Abscess", "Pneumonia / Respiratory", "Sepsis / Endocarditis", "Gastroenteritis / Foodborne"],
-        triggerWords: ["Coagulase", "Cytotoxins", "Exfoliative toxins", "Enterotoxins", "TSST-1", "MRSA", "Protein A"],
-        virulence: "Grape-like clusters with thick peptidoglycan and Protein A (binds Fc receptor of IgG to block opsonization). Produces alpha/beta/gamma/Panton-Valentine leukocidin cytotoxins, exfoliative toxins A/B (SSSS), heat-stable enterotoxins, and superantigen TSST-1.",
-        diseases: "Toxin-mediated (Scalded skin syndrome, Toxic shock syndrome, rapid-onset food poisoning); Suppurative (Impetigo, folliculitis, carbuncles, wound infections, bacteremia, endocarditis, osteomyelitis, septic arthritis, empyema).",
-        diagnosis: "Microscopy useful for pyogenic abscesses (not blood/food). Grows rapidly on nonselective sheep blood agar (golden-yellow colonies due to carotenoid pigment, beta-hemolysis) and selective mannitol salt agar (ferments mannitol). Positive catalase and coagulase tests; MALDI-TOF or NAAT for MRSA (mecA/mecC).",
-        treatment: "Incision and drainage for localized abscesses. Oral therapy: TMP-SMX, doxycycline, clindamycin, or linezolid. Serious systemic MRSA infections require intravenous vancomycin, daptomycin, or ceftaroline."
+        id: "cat1",
+        label: "1. Staining & Cell Wall Profile",
+        options: [
+          "Gram-Positive", "Gram-Negative", "Gram-Variable / Poorly Staining",
+          "Strongly Acid-Fast", "Weakly / Partially Acid-Fast", "Non-Acid-Fast",
+          "Wall-Less / Sterols in Membrane", "Giemsa / Wright-Giemsa", "Silver Stain", "Darkfield Microscopy", "PAS-Positive Macrophages"
+        ]
       },
       {
-        id: "listeria_mono",
-        name: "Listeria monocytogenes",
-        chapter: "Ch. 20: Listeria and Related Gram-Positive Bacteria",
-        tags: ["Gram-Positive", "Rods (Bacilli)", "Coccobacilli", "Aerobe / Facultative", "Intracellular", "Catalase (+)", "Beta-Hemolytic", "Tumbling Motility", "Cold Enrichment", "Meningitis / CNS", "Gastroenteritis / Foodborne", "Sepsis / Endocarditis"],
-        triggerWords: ["Cold enrichment", "Tumbling motility", "Intracellular", "Listeriolysin O", "ActA", "Unpasteurized dairy", "Neonatal meningitis"],
-        virulence: "Facultative intracellular pathogen. Internalins mediate entry; Listeriolysin O (LLO) and phospholipases C lyse the phagolysosome at acidic pH; ActA coordinates host actin polymerization to propel bacteria cell-to-cell via filopodia, evading humoral immunity.",
-        diseases: "Neonatal disease (early-onset granulomatosis infantiseptica; late-onset meningitis with septicemia); Meningitis and primary bacteremia in pregnant women, transplant recipients, patients on TNF-alpha inhibitors, and older adults; self-limited febrile gastroenteritis.",
-        diagnosis: "CSF Gram stain is frequently negative (<10^4 bacteria/mL) or shows intracellular/extracellular Gram-positive coccobacilli (can mimic S. pneumoniae). Grows at 4°C (cold enrichment), exhibits weak beta-hemolysis on sheep blood agar, positive CAMP test, and characteristic tumbling motility at 25°C.",
-        treatment: "Ampicillin (alone or combined with gentamicin for severe infections) is the treatment of choice. Naturally resistant to cephalosporins! TMP-SMX or erythromycin used in penicillin-allergic patients."
+        id: "cat2",
+        label: "2. Microscopic Morphology",
+        options: [
+          "Cocci in Grape-like Clusters", "Cocci in Chains or Pairs", "Lancet-Shaped Diplococci", "Kidney-Bean Diplococci",
+          "Regular / Uniform Rods", "Boxcar-Shaped Rods", "Club-Shaped / Chinese-Letter Diphtheroids", "Coccobacilli / Tiny Pleomorphic Rods",
+          "Fusiform / Spindle-Shaped Rods", "Branching Filamentous Rods", "Beaded / Cording Rods",
+          "Comma-Shaped / Curved Rods", "Gull-Wing / S-Shaped / Helical Rods", "Thin Tightly Coiled Spirochetes",
+          "Loosely Coiled Thick Spirochetes", "Hooked-End Spirochetes", "Elementary & Reticulate Bodies", "Intraleukocytic Morulae"
+        ]
       },
       {
-        id: "campylobacter_jejuni",
-        name: "Campylobacter jejuni",
-        chapter: "Ch. 27: Campylobacter and Helicobacter",
-        tags: ["Gram-Negative", "Curved / Spiral", "Microaerophilic", "Catalase (+)", "Oxidase (+)", "Gastroenteritis / Foodborne"],
-        triggerWords: ["Curved Gram-negative rod", "Microaerophilic", "42°C growth", "Poultry", "Guillain-Barré syndrome", "Reactive arthritis"],
-        virulence: "Thin, comma- or S-shaped rods with polar flagella. Adhesins, cytotoxic enzymes, and enterotoxins mediate mucosal invasion and ulceration of the jejunum, ileum, and colon. Sialylated lipooligosaccharides (LOS) mimic human gangliosides (molecular mimicry).",
-        diseases: "Acute enteritis with cramping abdominal pain, malaise, fever, and bloody/mucoid diarrhea (10+ stools/day; can mimic acute appendicitis). Post-infectious autoimmune complications: Guillain-Barré syndrome (cross-reactive antibodies to peripheral neural gangliosides) and reactive arthritis.",
-        diagnosis: "Gram stain insensitive due to thin morphology, though 'gull-wing' rods may be seen. Requires microaerophilic atmosphere (5%-7% O2, 5%-10% CO2) and selective agar incubated at 40°C-42°C for 48+ hours. Stool antigen tests and multiplex enteric NAAT panels are highly sensitive.",
-        treatment: "Self-limited gastroenteritis managed with fluid and electrolyte replacement. Severe enteritis or septicemia treated with azithromycin (drug of choice); fluoroquinolones used as secondary option due to rising resistance."
+        id: "cat3",
+        label: "3. Oxygen, Intracellularity & Spores",
+        options: [
+          "Obligate Aerobe", "Facultative Anaerobe", "Aerotolerant Anaerobe", "Microaerophilic", "Capnophilic (Requires CO2)", "Obligate Anaerobe",
+          "Extracellular", "Facultative Intracellular", "Obligate Intracellular",
+          "Spore-Forming", "Non-Spore-Forming"
+        ]
       },
       {
-        id: "clostridioides_difficile",
-        name: "Clostridioides difficile",
-        chapter: "Ch. 29: Clostridium and Clostridioides",
-        tags: ["Gram-Positive", "Rods (Bacilli)", "Obligate Anaerobe", "Spore-Forming", "Catalase (-)", "Gastroenteritis / Foodborne"],
-        triggerWords: ["Antibiotic-associated diarrhea", "Pseudomembranous colitis", "Enterotoxin A", "Cytotoxin B", "Spores", "NAAT / GDH"],
-        virulence: "Strict anaerobic, spore-forming rod. Produces Enterotoxin A (chemotactic for neutrophils, disrupts tight junctions causing fluid hypersecretion) and Cytotoxin B (depolymerizes actin cytoskeleton, destroying enterocytes and forming pseudomembranes). Highly resistant spores persist on hospital surfaces.",
-        diseases: "Spectrum ranges from self-limited antibiotic-associated diarrhea (triggered by clindamycin, cephalosporins, penicillins, fluoroquinolones) to life-threatening pseudomembranous colitis and toxic megacolon.",
-        diagnosis: "Stool microscopy and routine culture alone are non-diagnostic because non-toxigenic colonization occurs. Two-step algorithm: screen with Glutamate Dehydrogenase (GDH) antigen or NAAT for toxin genes, combined with immunoassay for free Toxin A/B in stool to confirm active disease.",
-        treatment: "Discontinue the offending broad-spectrum antibiotic. Oral vancomycin or fidaxomicin for initial and severe episodes; fecal microbiota transplantation (FMT) or bezlotoxumab for multiply recurrent disease. Avoid alcohol-based hand rubs (ineffective against spores—use soap and water)."
+        id: "cat4",
+        label: "4. Enzymes, Hemolysis & Motility",
+        options: [
+          "Catalase (+)", "Catalase (-)", "Coagulase (+)", "Coagulase (-)", "Oxidase (+)", "Oxidase (-)", "Urease (+)",
+          "Beta-Hemolytic (Complete)", "Alpha-Hemolytic (Partial/Green)", "Gamma-Hemolytic (Non-Hemolytic)", "Double-Zone Hemolysis",
+          "Motile", "Non-Motile", "Tumbling Motility (25°C)", "Swarming Motility", "Corkscrew / Darting Motility", "Actin-Rocket Motility"
+        ]
       },
       {
-        id: "mycoplasma_pneumoniae",
-        name: "Mycoplasma pneumoniae",
-        chapter: "Ch. 32: Mycoplasma",
-        tags: ["Wall-Less", "Aerobe / Facultative", "Atypical Pneumonia", "Pneumonia / Respiratory"],
-        triggerWords: ["No cell wall", "Sterols in membrane", "P1 adhesin", "CARDS toxin", "Walking pneumonia", "Cold agglutinins"],
-        virulence: "Smallest free-living bacterium; lacks a peptidoglycan cell wall and incorporates host sterols into its trilaminar cell membrane. P1 adhesin binds sialylated glycoprotein receptors at the base of respiratory epithelial cilia, causing ciliostasis and sloughing. Produces CARDS toxin (ADP-ribosylating/vacuolating toxin).",
-        diseases: "Tracheobronchitis, pharyngitis, and atypical 'walking' bronchopneumonia with persistent dry hacking cough (especially in school-aged children and young adults). Extrapulmonary sequelae include Stevens-Johnson syndrome, erythema multiforme, hemolytic anemia (IgM cold agglutinins to I antigen), and meningoencephalitis.",
-        diagnosis: "Microscopy is useless (absence of cell wall prevents Gram staining). Culture is slow (takes weeks; 'fried-egg' colonies). Multiplex respiratory NAAT (PCR) is the diagnostic test of choice, supplemented by IgM/IgG serology.",
-        treatment: "Intrinsically resistant to all beta-lactams, vancomycin, and sulfonamides. Treated with macrolides (azithromycin), tetracyclines (doxycycline), or respiratory fluoroquinolones (levofloxacin)."
+        id: "cat5",
+        label: "5. Media, Growth & Colony Hallmarks",
+        options: [
+          "Rapid Lactose Fermenter", "Slow / Late Lactose Fermenter", "Non-Lactose Fermenter",
+          "Chocolate Agar (X & V Factors)", "Chocolate Agar (X Factor Only)", "Chocolate Agar (V Factor Only)",
+          "Thayer-Martin Media", "BCYE Agar (Cysteine & Iron)", "Cysteine-Tellurite / Tinsdale Agar", "TCBS Agar",
+          "Bordet-Gengou / Regan-Lowe Agar", "Löwenstein-Jensen / Middlebrook Agar", "Mannitol Salt Agar (Yellow)",
+          "Bile Esculin Agar (Black)", "Eaton Agar (Fried-Egg Colonies)", "Cell Culture Only", "Unculturable In Vitro",
+          "Cold Enrichment (4°C)", "Thermophilic (42°C)", "Halophilic (Salt-Loving)", "Slow-Growing (>7 Days)", "Rapidly Growing Mycobacteria (<7 Days)",
+          "Golden-Yellow Colonies", "Blue-Green Pigment + Grape Odor", "Red Pigment (Prodigiosin)", "Salmon-Pink Colonies",
+          "Yellow Sulfur Granules", "Photochromogen", "Scotochromogen", "Medusa Head Colonies", "Molar Tooth / Breadcrumb Colonies",
+          "Agar Pitting + Bleach Odor", "Butterscotch Odor", "Musty / Mouse Nest Odor", "Horse Stable Odor", "Heavily Mucoid Capsule"
+        ]
+      },
+      {
+        id: "cat6",
+        label: "6. Differential & Biochemical Tests",
+        options: [
+          "Bacitracin Susceptible", "Bacitracin Resistant", "Optochin Susceptible + Bile Soluble", "Optochin Resistant",
+          "PYR (+)", "CAMP Test / Hippurate (+)", "Growth in 6.5% NaCl", "Novobiocin Susceptible", "Novobiocin Resistant",
+          "Nagler Reaction / Lecithinase (+)", "Elek Test (+)", "Indole (+)", "H2S Production (+)", "Citrate (+)", "VP (+)",
+          "Phenylalanine Deaminase (+)", "Maltose + Glucose Fermenter", "Glucose Only Fermenter", "Butyrate Esterase (+)",
+          "Bipolar Safety-Pin Staining", "Niacin + Nitrate (+)"
+        ]
+      },
+      {
+        id: "cat7",
+        label: "7. Antigens, Serology & Molecular",
+        options: [
+          "Lancefield Group A", "Lancefield Group B", "Lancefield Group D",
+          "Urinary Antigen Test (+)", "Stool GDH + Toxin A/B Assay", "Sorbitol MacConkey (-)", "Urea Breath / Stool Antigen Test",
+          "VDRL / RPR + FTA-ABS / TP-PA", "Cold Agglutinins (Anti-I IgM)", "Two-Tier EIA + Western Blot",
+          "Phase I vs Phase II IgG", "ASO / Anti-DNase B Titers"
+        ]
+      },
+      {
+        id: "cat8",
+        label: "8. Virulence & Toxin Mechanisms",
+        options: [
+          "Polysaccharide Capsule", "Poly-D-Glutamic Acid Capsule", "M Protein", "Protein A", "IgA1 Protease",
+          "Mycolic Acids & Cord Factor", "Biofilm / Slime Layer", "Antigenic Variation", "LOS (Lacks O-Antigen)",
+          "Superantigen (TSST-1 / Enterotoxins / Spe)", "AB Toxin: Inhibits EF-2", "AB Toxin: Increases cAMP",
+          "Heat-Stable Toxin: Increases cGMP", "28S rRNA Shiga / Shiga-Like Toxin", "Neurotoxin: Blocks ACh (Flaccid)",
+          "Neurotoxin: Blocks GABA/Glycine (Spastic)", "Cytoskeleton Toxin (Toxin A/B)", "Cytolytic / Pore-Forming Toxin",
+          "Exfoliative Toxins A/B", "Heat-Stable Emetic Toxin", "Heat-Labile Diarrheal Toxin", "CagA & VacA"
+        ]
+      },
+      {
+        id: "cat9",
+        label: "9. Clinical Syndromes (Organ Systems)",
+        options: [
+          "Impetigo / Folliculitis / Abscesses", "Erysipelas / Cellulitis", "Necrotizing Fasciitis / Gas Gangrene",
+          "Scalded Skin Syndrome (SSSS)", "Cutaneous Eschar / Ulcer", "Erythema Migrans", "Rash on Palms & Soles", "Osteomyelitis / Septic Arthritis",
+          "Pharyngitis / Scarlet Fever", "Diphtheria Pseudomembrane", "Epiglottitis / Otitis / Sinusitis", "Typical Lobar Pneumonia",
+          "Atypical Walking Pneumonia", "Cavitary / Granulomatous Lung Disease", "Paroxysmal Whooping Cough", "CF / Ventilator Pneumonia",
+          "Sepsis / Septic Shock", "Acute Endocarditis", "Subacute / Culture-Negative Endocarditis", "Relapsing / Undulant Fever",
+          "Rheumatic Fever / PSGN", "Bacillary Angiomatosis", "Neonatal Meningitis", "Community-Acquired Meningitis",
+          "Brain Abscess", "Spastic Paralysis / Tetanus", "Flaccid Paralysis / Botulism", "Neurosyphilis",
+          "Rapid-Onset Vomiting", "Watery Secretory Diarrhea", "Inflammatory / Bloody Dysentery", "Pseudomembranous Colitis",
+          "Peptic Ulcer / Gastric Cancer", "Enteric (Typhoid) Fever", "Pseudoappendicitis", "Hemolytic Uremic Syndrome (HUS)",
+          "UTI / Pyelonephritis / Staghorn Calculi", "Urethritis / Cervicitis / PID", "Painless Chancre", "Painful Chancroid",
+          "Lymphogranuloma Venereum", "Bacterial Vaginosis (Clue Cells)", "Neonatal Conjunctivitis", "Trachoma", "Keratitis / Endophthalmitis"
+        ]
+      },
+      {
+        id: "cat10",
+        label: "10. Epidemiology, Vectors & Quirks",
+        options: [
+          "Hard Tick (Ixodes / Dermacentor / Amblyomma)", "Soft Tick (Ornithodoros)", "Body Louse (Pediculus)", "Flea (Xenopsylla)", "Chigger / Mite",
+          "Cat / Dog Bite or Scratch", "Unpasteurized Dairy / Livestock", "Wool / Animal Hides", "Rabbits / Rodents", "Birds / Parrots",
+          "Poultry / Eggs / Reptiles", "Fish / Shellfish / Marine Water", "Armadillos", "Reheated Rice", "Canned Goods / Honey",
+          "Undercooked Ground Beef", "Deli Meats / Soft Cheese", "Cooling Towers / Showers / AC", "Hot Tubs / Burn Wounds / Contact Lenses",
+          "Dental Procedures / Intravascular Catheters", "Asplenia / Complement Deficiency Risk", "CGD Patient Risk",
+          "Iron Overload / Cirrhosis Risk", "Colon Cancer Association", "Intrinsically Cephalosporin-Resistant", "Intrinsically Vancomycin-Resistant"
+        ]
       }
     ];
 
+    // List of Chapter Block Files (Mainframe automatically loads any file present here)
+    const chapterFiles = [
+      "data/ch17_staphylococcus.js",
+      "data/ch18_streptococcus.js",
+      "data/ch19_bacillus.js",
+      "data/ch20_listeria_corynebacterium.js",
+      "data/ch21_mycobacterium_nocardia.js",
+      "data/ch22_neisseria.js",
+      "data/ch23_haemophilus_pasteurella.js",
+      "data/ch24_enterobacterales.js",
+      "data/ch25_vibrio_aeromonas.js",
+      "data/ch26_pseudomonas_nonfermenters.js",
+      "data/ch27_campylobacter_helicobacter.js",
+      "data/ch28_miscellaneous_gnr.js",
+      "data/ch29_clostridium.js",
+      "data/ch30_nonspore_anaerobes.js",
+      "data/ch31_spirochetes.js",
+      "data/ch32_mycoplasma.js",
+      "data/ch33_rickettsia_ehrlichia_coxiella.js",
+      "data/ch34_chlamydia.js"
+    ];
+
     let activeFilters = new Set();
+    let openAccordions = new Set(["cat1"]); // Open Category 1 by default
     let searchQuery = "";
     let selectedBacteriumId = null;
 
-    function init() {
-      document.getElementById("search-input").addEventListener("input", (e) => {
-        searchQuery = e.target.value.toLowerCase();
-        render();
+    // Dynamically load chapter files without crashing if some aren't created yet
+    function loadAllChapters() {
+      let loaded = 0;
+      chapterFiles.forEach(src => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = () => { loaded++; render(); };
+        script.onerror = () => { loaded++; if (loaded === chapterFiles.length) render(); };
+        document.head.appendChild(script);
       });
+    }
+
+    function toggleAccordion(catId) {
+      if (openAccordions.has(catId)) openAccordions.delete(catId);
+      else openAccordions.add(catId);
       render();
     }
 
@@ -151,12 +242,13 @@
     }
 
     function getMatchingBacteria(testFilters = activeFilters) {
-      return bacteriaDB.filter(b => {
+      return window.BACTERIA_DB.filter(b => {
         const matchesTags = [...testFilters].every(tag => b.tags.includes(tag));
         const matchesSearch = !searchQuery || 
           b.name.toLowerCase().includes(searchQuery) ||
           b.triggerWords.some(tw => tw.toLowerCase().includes(searchQuery)) ||
-          b.diseases.toLowerCase().includes(searchQuery);
+          b.diseases.toLowerCase().includes(searchQuery) ||
+          b.tags.some(t => t.toLowerCase().includes(searchQuery));
         return matchesTags && matchesSearch;
       });
     }
@@ -172,48 +264,60 @@
       document.getElementById("active-count").textContent = `${activeFilters.size} selected`;
       document.getElementById("match-count").textContent = matching.length;
 
-      // Render Active Pills
+      // Active Filter Pills
       const pillsContainer = document.getElementById("active-pills");
       pillsContainer.innerHTML = [...activeFilters].map(tag => `
-        <button onclick="toggleFilter('${tag}')" class="bg-teal-500/20 border border-teal-500/40 text-teal-200 text-xs px-3 py-1 rounded-full flex items-center gap-1.5 hover:bg-teal-500/30">
+        <button onclick="toggleFilter('${tag.replace(/'/g, "\\'")}')" class="bg-teal-500/20 border border-teal-500/40 text-teal-200 text-xs px-3 py-1 rounded-full flex items-center gap-1.5 hover:bg-teal-500/30">
           <span>${tag}</span>
           <span class="font-bold">×</span>
         </button>
       `).join("");
 
-      // Render Filter Sidebar (with viable path checking)
+      // Render 10 Collapsible Category Accordions
       const filterContainer = document.getElementById("filter-container");
-      filterContainer.innerHTML = filterCategories.map(cat => `
-        <div>
-          <h3 class="text-xs font-semibold text-slate-400 mb-2">${cat.label}</h3>
-          <div class="flex flex-wrap gap-1.5">
-            ${cat.options.map(opt => {
-              const isSelected = activeFilters.has(opt);
-              const hypothetical = new Set(activeFilters);
-              hypothetical.add(opt);
-              const countIfClicked = getMatchingBacteria(hypothetical).length;
-              const isViable = isSelected || countIfClicked > 0;
+      filterContainer.innerHTML = filterCategories.map(cat => {
+        const isOpen = openAccordions.has(cat.id);
+        const activeInCat = cat.options.filter(o => activeFilters.has(o)).length;
+        return `
+          <div class="border border-slate-700/80 rounded-lg overflow-hidden bg-slate-900/40">
+            <button onclick="toggleAccordion('${cat.id}')" class="w-full px-3 py-2.5 text-left flex justify-between items-center hover:bg-slate-800/80 transition">
+              <span class="text-xs font-semibold text-slate-200">${cat.label}</span>
+              <div class="flex items-center gap-2">
+                ${activeInCat > 0 ? `<span class="bg-teal-500 text-slate-950 text-[10px] font-bold px-1.5 py-0.5 rounded-full">${activeInCat}</span>` : ""}
+                <span class="text-slate-400 text-xs">${isOpen ? "▲" : "▼"}</span>
+              </div>
+            </button>
+            <div class="${isOpen ? "p-3 border-t border-slate-700/60 flex flex-wrap gap-1.5" : "hidden"}">
+              ${cat.options.map(opt => {
+                const isSelected = activeFilters.has(opt);
+                const hypothetical = new Set(activeFilters);
+                hypothetical.add(opt);
+                const countIfClicked = getMatchingBacteria(hypothetical).length;
+                const isViable = isSelected || countIfClicked > 0;
 
-              let btnClass = "bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500";
-              if (isSelected) btnClass = "bg-teal-600 border-teal-400 text-white font-medium shadow";
-              else if (!isViable) btnClass = "bg-slate-900/40 border-slate-800 text-slate-600 cursor-not-allowed";
+                let btnClass = "bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500";
+                if (isSelected) btnClass = "bg-teal-600 border-teal-400 text-white font-medium shadow";
+                else if (!isViable) btnClass = "bg-slate-900/30 border-slate-800/60 text-slate-600 cursor-not-allowed";
 
-              return `
-                <button ${!isViable ? "disabled" : ""} onclick="toggleFilter('${opt}')"
-                  class="border text-xs px-2.5 py-1 rounded-lg transition flex items-center gap-1 ${btnClass}">
-                  <span>${opt}</span>
-                  <span class="text-[10px] opacity-70">(${isSelected ? matching.length : countIfClicked})</span>
-                </button>
-              `;
-            }).join("")}
+                return `
+                  <button ${!isViable ? "disabled" : ""} onclick="toggleFilter('${opt.replace(/'/g, "\\'")}')"
+                    class="border text-xs px-2.5 py-1 rounded-lg transition flex items-center gap-1 ${btnClass}">
+                    <span>${opt}</span>
+                    <span class="text-[10px] opacity-70">(${isSelected ? matching.length : countIfClicked})</span>
+                  </button>
+                `;
+              }).join("")}
+            </div>
           </div>
-        </div>
-      `).join("");
+        `;
+      }).join("");
 
       // Render Bacteria Cards
       const grid = document.getElementById("bacteria-grid");
-      if (matching.length === 0) {
-        grid.innerHTML = `<div class="col-span-2 bg-slate-800 border border-slate-700 rounded-xl p-8 text-center text-slate-400">No bacteria match all selected criteria. Remove a filter or reset.</div>`;
+      if (window.BACTERIA_DB.length === 0) {
+        grid.innerHTML = `<div class="col-span-2 bg-slate-800 border border-slate-700 rounded-xl p-8 text-center text-slate-400">Waiting for chapter block files in the <b>data/</b> folder...</div>`;
+      } else if (matching.length === 0) {
+        grid.innerHTML = `<div class="col-span-2 bg-slate-800 border border-slate-700 rounded-xl p-8 text-center text-slate-400">No bacteria match all selected criteria. Click a pill above to remove a filter.</div>`;
       } else {
         grid.innerHTML = matching.map(b => `
           <div onclick="selectBacterium('${b.id}')" 
@@ -227,21 +331,19 @@
             </div>
             <div class="text-xs text-slate-400 border-t border-slate-700/60 pt-2 flex justify-between items-center">
               <span>${b.tags.slice(0, 3).join(" • ")}</span>
-              <span class="text-teal-400 font-semibold">View Profile →</span>
+              <span class="text-teal-400 font-semibold">Open Profile →</span>
             </div>
           </div>
         `).join("");
       }
 
-      if (matching.length === 1) {
-        selectedBacteriumId = matching[0].id;
-      }
+      if (matching.length === 1) selectedBacteriumId = matching[0].id;
       renderDetail();
     }
 
     function renderDetail() {
       const panel = document.getElementById("detail-panel");
-      const b = bacteriaDB.find(x => x.id === selectedBacteriumId);
+      const b = window.BACTERIA_DB.find(x => x.id === selectedBacteriumId);
       if (!b) {
         panel.classList.add("hidden");
         return;
@@ -253,7 +355,7 @@
             <span class="text-xs text-teal-400 font-semibold uppercase">${b.chapter}</span>
             <h2 class="text-2xl font-bold italic text-white">${b.name}</h2>
           </div>
-          <button onclick="selectedBacteriumId=null; renderDetail();" class="text-slate-400 hover:text-white text-sm px-2 py-1">Close ✕</button>
+          <button onclick="selectedBacteriumId=null; renderDetail();" class="text-slate-400 hover:text-white text-sm px-2 py-1 border border-slate-700 rounded-lg">Close ✕</button>
         </div>
         <div class="flex flex-wrap gap-1.5">
           ${b.tags.map(t => `<span class="bg-teal-500/10 border border-teal-500/30 text-teal-300 text-xs px-2.5 py-0.5 rounded-full">${t}</span>`).join("")}
@@ -279,7 +381,11 @@
       `;
     }
 
-    init();
+    document.getElementById("search-input").addEventListener("input", (e) => {
+      searchQuery = e.target.value.toLowerCase();
+      render();
+    });
+    loadAllChapters();
   </script>
 </body>
 </html>
