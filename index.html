@@ -3,12 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Murray's Bacteriology Navigator (v2.1)</title>
+  <title>Murray's Bacteriology Navigator (v2.2)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    // Global Database Array - Chapter files automatically plug into this!
+    // Global Database & Trigger Dictionary - Modular data files plug into these automatically!
     window.BACTERIA_DB = [];
+    window.TRIGGER_DEFS = {};
   </script>
+  <script src="data/trigger_definitions.js"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
 
@@ -99,12 +101,28 @@
         <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400">
           Candidate Pathogens (<span id="match-count" class="text-teal-400">0</span><span id="total-count" class="text-slate-500"></span>)
         </h2>
-        <span class="text-xs text-slate-400">Click any card to open full profile &bull; Press <kbd class="bg-slate-800 border border-slate-700 px-1.5 py-0.5 rounded text-[10px]">Esc</kbd> to close</span>
+        <span class="text-xs text-slate-400">Click any amber trigger word for a quick definition &bull; Press <kbd class="bg-slate-800 border border-slate-700 px-1.5 py-0.5 rounded text-[10px]">Esc</kbd> to close</span>
       </div>
 
       <!-- Bacteria Grid -->
       <div id="bacteria-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
     </main>
+  </div>
+
+  <!-- Floating Trigger-Word Definition Popover -->
+  <div id="trigger-popover" role="dialog" aria-live="polite"
+    class="hidden fixed z-50 w-80 max-w-[calc(100vw-24px)] bg-slate-800 border border-amber-400/70 rounded-xl shadow-2xl p-4 text-xs leading-relaxed">
+    <div class="flex justify-between items-start gap-2 pb-2 mb-2 border-b border-slate-700">
+      <h4 id="popover-title" class="text-sm font-bold text-amber-300 leading-snug"></h4>
+      <button onclick="closeTriggerPopover()" aria-label="Close definition"
+        class="text-slate-400 hover:text-white text-sm font-bold leading-none px-1">&times;</button>
+    </div>
+    <p id="popover-body" class="text-slate-200"></p>
+    <div class="mt-3 pt-2 border-t border-slate-700/80 flex justify-between items-center">
+      <span id="popover-source" class="text-[10px] text-slate-400">Murray 10th Ed. Hallmark</span>
+      <button id="popover-search-btn"
+        class="text-[11px] font-medium text-teal-400 hover:text-teal-300 underline">Find matching bacteria &rarr;</button>
+    </div>
   </div>
 
   <!-- Specimen Collection & CSF Cheat Sheet Modal (Murray Tables 78.2, 80.2, 81, 82.3, 83.2) -->
@@ -164,7 +182,7 @@
   </div>
 
   <script>
-    // 10-Category Master Taxonomy (v2.1 — 233 options, 100% active, 0 subset overlaps)
+    // 10-Category Master Taxonomy (v2.2 — 233 options, 100% active, 0 subset overlaps)
     const filterCategories = [
       {
         id: "cat1",
@@ -328,15 +346,22 @@
     let searchQuery = "";
     let filterSearchQuery = "";
     let selectedChapter = "ALL";
-    let sortMode = "chapter"; // "chapter" or "alpha"
+    let sortMode = "chapter";
     let quizMode = false;
     let hideZeroOptions = false;
     let selectedBacteriumId = null;
     let lastMatchCount = null;
+    let activePopoverAnchor = null;
     let searchIndex = new Map();
 
     function stripHtml(html) {
       return (html || "").replace(/<[^>]+>/g, " ").replace(/&[a-z0-9#]+;/gi, " ").replace(/\s+/g, " ").trim().toLowerCase();
+    }
+
+    function decodePlainText(html) {
+      const div = document.createElement("div");
+      div.innerHTML = html || "";
+      return (div.textContent || div.innerText || "").replace(/\s+/g, " ").trim();
     }
 
     function getChapterNum(chapterStr) {
@@ -395,7 +420,96 @@
       });
     }
 
+    // 3-Tier Trigger-Word Definition Lookup (Dictionary -> Local Glossary -> Section Snippet)
+    function getTriggerDefinition(term, bacteriumId) {
+      if (window.TRIGGER_DEFS && window.TRIGGER_DEFS[term]) {
+        return { text: window.TRIGGER_DEFS[term], source: "Murray 10th Ed. Hallmark" };
+      }
+      const b = window.BACTERIA_DB.find(x => x.id === bacteriumId);
+      if (b) {
+        const core = term.toLowerCase().replace(/\([^)]*\)/g, "").trim();
+        const words = core.split(/\s+/).filter(w => w.length >= 3);
+        // Tier 2: Glossary match
+        if (b.glossary) {
+          const lis = b.glossary.match(/<li[^>]*>[\s\S]*?<\/li>/gi) || [];
+          for (const li of lis) {
+            const txt = decodePlainText(li);
+            if (words.some(w => txt.toLowerCase().includes(w))) {
+              return { text: txt, source: "From Organism Glossary" };
+            }
+          }
+        }
+        // Tier 3: Virulence / Diagnosis / Diseases snippet
+        for (const sec of [b.virulence, b.diagnosis, b.diseases, b.overview]) {
+          if (!sec) continue;
+          const lis = sec.match(/<li[^>]*>[\s\S]*?<\/li>/gi) || [];
+          for (const li of lis) {
+            const txt = decodePlainText(li.replace(/<(ul|ol)[^>]*>[\s\S]*?<\/\1>/gi, ""));
+            if (words.length && words.every(w => txt.toLowerCase().includes(w))) {
+              return { text: txt.length > 240 ? txt.slice(0, 237) + "…" : txt, source: "From Clinical Profile" };
+            }
+          }
+        }
+      }
+      return { text: `High-yield diagnostic hallmark for this pathogen. Open the full profile below to review its clinical and laboratory context.`, source: "Diagnostic Hallmark" };
+    }
+
+    function openTriggerPopover(event, btnEl, term, bacteriumId) {
+      event.stopPropagation();
+      const popover = document.getElementById("trigger-popover");
+
+      // Toggle off if clicking the same active pill
+      if (activePopoverAnchor === btnEl && !popover.classList.contains("hidden")) {
+        closeTriggerPopover();
+        return;
+      }
+
+      const def = getTriggerDefinition(term, bacteriumId);
+      document.getElementById("popover-title").textContent = term;
+      document.getElementById("popover-body").textContent = def.text;
+      document.getElementById("popover-source").textContent = def.source;
+
+      const searchKeyword = term.replace(/\([^)]*\)/g, "").split(/[:/–—-]/)[0].trim() || term;
+      const searchBtn = document.getElementById("popover-search-btn");
+      searchBtn.onclick = () => {
+        closeTriggerPopover();
+        searchQuery = searchKeyword.toLowerCase();
+        document.getElementById("search-input").value = searchKeyword;
+        render();
+      };
+
+      popover.classList.remove("hidden");
+      activePopoverAnchor = btnEl;
+
+      // Smart viewport-aware positioning
+      const rect = btnEl.getBoundingClientRect();
+      const popRect = popover.getBoundingClientRect();
+      const margin = 12;
+
+      let top = rect.bottom + 8;
+      if (top + popRect.height > window.innerHeight - margin) {
+        top = rect.top - popRect.height - 8;
+      }
+      if (top < margin) top = margin;
+
+      let left = rect.left + (rect.width / 2) - (popRect.width / 2);
+      if (left < margin) left = margin;
+      if (left + popRect.width > window.innerWidth - margin) {
+        left = window.innerWidth - popRect.width - margin;
+      }
+
+      popover.style.top = `${top}px`;
+      popover.style.left = `${left}px`;
+    }
+
+    function closeTriggerPopover() {
+      const popover = document.getElementById("trigger-popover");
+      popover.classList.add("hidden");
+      activePopoverAnchor = null;
+    }
+
     function applyPreset(idx) {
+      closeTriggerPopover();
       const preset = clinicalPresets[idx];
       if (!preset) return;
       activeFilters = new Set(preset.tags);
@@ -419,6 +533,7 @@
     }
 
     function toggleSpecimenModal(open) {
+      closeTriggerPopover();
       const modal = document.getElementById("specimen-modal");
       if (open) modal.classList.remove("hidden");
       else modal.classList.add("hidden");
@@ -437,6 +552,7 @@
     }
 
     function toggleFilter(tag) {
+      closeTriggerPopover();
       if (activeFilters.has(tag)) activeFilters.delete(tag);
       else activeFilters.add(tag);
       render();
@@ -449,6 +565,7 @@
     }
 
     function toggleQuizMode() {
+      closeTriggerPopover();
       quizMode = !quizMode;
       const btn = document.getElementById("quiz-btn");
       btn.textContent = quizMode ? "Quiz Mode: On" : "Quiz Mode: Off";
@@ -459,6 +576,7 @@
     }
 
     function resetFilters() {
+      closeTriggerPopover();
       activeFilters.clear();
       searchQuery = "";
       filterSearchQuery = "";
@@ -487,12 +605,14 @@
     }
 
     function selectBacterium(id) {
+      closeTriggerPopover();
       selectedBacteriumId = id;
       render();
       document.getElementById("detail-panel").scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
     function closeDetail() {
+      closeTriggerPopover();
       selectedBacteriumId = null;
       renderDetail();
       document.querySelectorAll("[data-card-id]").forEach(el => {
@@ -502,7 +622,7 @@
     }
 
     function escJs(str) {
-      return str.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+      return str.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;");
     }
 
     function render() {
@@ -581,7 +701,7 @@
         `;
       }).join("");
 
-      // Render Bacteria Cards
+      // Render Bacteria Cards (with clickable trigger-word pills)
       const grid = document.getElementById("bacteria-grid");
       if (window.BACTERIA_DB.length === 0) {
         grid.innerHTML = `<div class="col-span-2 bg-slate-800 border border-slate-700 rounded-xl p-8 text-center text-slate-400">Waiting for chapter block files in the <b>data/</b> folder...</div>`;
@@ -597,7 +717,11 @@
               <div class="text-[11px] text-teal-400 font-medium mb-1">${b.chapter}</div>
               <h3 class="text-lg font-bold italic text-white mb-2">${quizMode && selectedBacteriumId !== b.id ? `Unknown Pathogen #${idx + 1} <span class="text-xs not-italic font-normal text-amber-400">(click to reveal)</span>` : b.name}</h3>
               <div class="flex flex-wrap gap-1 mb-3">
-                ${b.triggerWords.map(tw => `<span class="bg-slate-900 text-amber-300/90 border border-amber-500/20 text-[11px] px-2 py-0.5 rounded">${tw}</span>`).join("")}
+                ${b.triggerWords.map(tw => `
+                  <button type="button" onclick="openTriggerPopover(event, this, '${escJs(tw)}', '${b.id}')" title="Click for quick definition"
+                    class="bg-slate-900 hover:bg-amber-500/20 text-amber-300/90 hover:text-amber-200 border border-amber-500/25 hover:border-amber-400 text-[11px] px-2 py-0.5 rounded transition text-left">
+                    ${tw}
+                  </button>`).join("")}
               </div>
             </div>
             <div class="text-xs text-slate-400 border-t border-slate-700/60 pt-2 flex justify-between items-center">
@@ -628,11 +752,16 @@
           <button onclick="closeDetail()" class="bg-slate-900 hover:bg-slate-700 text-slate-300 hover:text-white text-sm px-3 py-1.5 border border-slate-700 rounded-lg transition shrink-0">Close Profile &times;</button>
         </div>
 
-        <!-- Trigger Words Banner -->
+        <!-- Clickable Trigger Words Banner -->
         <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3">
-          <span class="text-xs font-bold uppercase text-amber-400 block mb-1.5">High-Yield Trigger Words &amp; Hallmarks</span>
+          <span class="text-xs font-bold uppercase text-amber-400 block mb-1.5">High-Yield Trigger Words &amp; Hallmarks <span class="normal-case font-normal text-amber-300/70">(click any pill for a quick definition)</span></span>
           <div class="flex flex-wrap gap-1.5">
-            ${b.triggerWords.map(tw => `<span class="bg-slate-900 text-amber-300 border border-amber-500/30 text-xs px-2.5 py-1 rounded font-medium">${tw}</span>`).join("")}
+            ${b.triggerWords.map(tw => `
+              <button type="button" onclick="openTriggerPopover(event, this, '${escJs(tw)}', '${b.id}')" title="Click for quick definition"
+                class="bg-slate-900 hover:bg-amber-500/25 text-amber-300 hover:text-amber-100 border border-amber-500/35 hover:border-amber-400 text-xs px-2.5 py-1 rounded font-medium transition flex items-center gap-1">
+                <span>${tw}</span>
+                <span class="text-[10px] opacity-60">?</span>
+              </button>`).join("")}
           </div>
         </div>
 
@@ -701,14 +830,23 @@
       hideZeroOptions = e.target.checked;
       render();
     });
+    document.addEventListener("click", (e) => {
+      const popover = document.getElementById("trigger-popover");
+      if (!popover.classList.contains("hidden") && !popover.contains(e.target)) {
+        closeTriggerPopover();
+      }
+    });
+    window.addEventListener("resize", closeTriggerPopover);
     document.addEventListener("keydown", (e) => {
       const tag = document.activeElement?.tagName;
       if (e.key === "/" && tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
         e.preventDefault();
         document.getElementById("search-input").focus();
       } else if (e.key === "Escape") {
+        const popover = document.getElementById("trigger-popover");
         const modal = document.getElementById("specimen-modal");
-        if (!modal.classList.contains("hidden")) toggleSpecimenModal(false);
+        if (!popover.classList.contains("hidden")) closeTriggerPopover();
+        else if (!modal.classList.contains("hidden")) toggleSpecimenModal(false);
         else if (selectedBacteriumId) closeDetail();
       }
     });
