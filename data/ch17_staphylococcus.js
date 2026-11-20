@@ -14,7 +14,7 @@ window.BACTERIA_DB.push(
       "Superantigen (TSST-1 / Enterotoxins / Spe)", "Cytolytic / Pore-Forming Toxin", "Exfoliative Toxins A/B", "Heat-Stable Emetic Toxin",
       "Impetigo / Folliculitis / Abscesses", "Scalded Skin Syndrome (SSSS)", "Osteomyelitis / Septic Arthritis",
       "Typical Lobar Pneumonia", "Sepsis / Septic Shock", "Acute Endocarditis", "Rapid-Onset Vomiting",
-      "CGD Patient Risk"
+      "CGD Patient Risk", "Keratitis / Endophthalmitis", "Epiglottitis / Otitis / Sinusitis", "Myocarditis / Pericarditis", "Septic Thrombophlebitis (Lemierre)", "Alcoholism / Aspiration Risk", "Transfusion-Associated Sepsis"
     ],
     triggerWords: [
       "Coagulase (+)", "Catalase (+)", "Grape-Like Clusters", "Protein A",
@@ -122,7 +122,7 @@ window.BACTERIA_DB.push(
       "Novobiocin Susceptible", "Halophilic (Salt-Loving)",
       "Biofilm / Slime Layer",
       "Subacute / Culture-Negative Endocarditis", "Sepsis / Septic Shock", "Osteomyelitis / Septic Arthritis",
-      "Dental Procedures / Intravascular Catheters"
+      "Dental Procedures / Intravascular Catheters", "Keratitis / Endophthalmitis", "Transfusion-Associated Sepsis"
     ],
     triggerWords: [
       "Coagulase (-)", "Novobiocin Susceptible", "Polysaccharide Slime Layer / Biofilm",

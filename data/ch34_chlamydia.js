@@ -14,7 +14,7 @@ window.BACTERIA_DB.push(
       "Cell Culture Only",
       "Urethritis / Cervicitis / PID", "Trachoma", "Neonatal Conjunctivitis", "Lymphogranuloma Venereum",
       "Atypical Walking Pneumonia", "Osteomyelitis / Septic Arthritis",
-      "Intrinsically Cephalosporin-Resistant"
+      "Intrinsically Cephalosporin-Resistant", "Reactive Arthritis (Reiter Syndrome)", "Lymphadenopathy / Bubo"
     ],
     triggerWords: [
       "Obligate Intracellular Energy Parasite — Biphasic Cycle: Infectious Elementary Body (EB) ↔ Replicating Reticulate Body (RB)",
@@ -73,7 +73,7 @@ window.BACTERIA_DB.push(
       "Non-Motile",
       "Cell Culture Only",
       "Atypical Walking Pneumonia", "Epiglottitis / Otitis / Sinusitis", "Pharyngitis / Scarlet Fever",
-      "Intrinsically Cephalosporin-Resistant"
+      "Intrinsically Cephalosporin-Resistant", "Reactive Arthritis (Reiter Syndrome)", "Myocarditis / Pericarditis"
     ],
     triggerWords: [
       "Single Serovar (TWAR) — Pear-Shaped Elementary Bodies & Multiple Non-Glycogen Inclusions",
@@ -125,7 +125,7 @@ window.BACTERIA_DB.push(
       "Non-Motile",
       "Cell Culture Only",
       "Atypical Walking Pneumonia", "Typical Lobar Pneumonia",
-      "Birds / Parrots", "Intrinsically Cephalosporin-Resistant"
+      "Birds / Parrots", "Intrinsically Cephalosporin-Resistant", "Myocarditis / Pericarditis"
     ],
     triggerWords: [
       "Psittacosis ('Parrot Fever') / Ornithosis — Acquired by Inhaling Dried Bird Droppings/Secretions",

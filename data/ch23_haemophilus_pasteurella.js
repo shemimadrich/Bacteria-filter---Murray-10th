@@ -76,7 +76,7 @@ window.BACTERIA_DB.push(
       "Facultative Anaerobe", "Capnophilic (Requires CO2)", "Extracellular", "Non-Spore-Forming",
       "Oxidase (+)", "Non-Motile",
       "Chocolate Agar (X Factor Only)",
-      "Painful Chancroid", "Cutaneous Eschar / Ulcer"
+      "Painful Chancroid", "Cutaneous Eschar / Ulcer", "Lymphadenopathy / Bubo"
     ],
     triggerWords: [
       "Chancroid (Soft Chancre — Painful Genital Ulcer + Inguinal Lymphadenopathy)",

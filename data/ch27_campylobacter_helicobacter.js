@@ -14,7 +14,7 @@ window.BACTERIA_DB.push(
       "CAMP Test / Hippurate (+)",
       "Polysaccharide Capsule", "LOS (Lacks O-Antigen)",
       "Inflammatory / Bloody Dysentery", "Pseudoappendicitis", "Osteomyelitis / Septic Arthritis",
-      "Poultry / Eggs / Reptiles", "Unpasteurized Dairy / Livestock"
+      "Poultry / Eggs / Reptiles", "Unpasteurized Dairy / Livestock", "Reactive Arthritis (Reiter Syndrome)", "Transfusion-Associated Sepsis"
     ],
     triggerWords: [
       "#1 Bacterial Cause of Gastroenteritis in US & Worldwide",
@@ -70,7 +70,7 @@ window.BACTERIA_DB.push(
       "Microaerophilic", "Extracellular", "Non-Spore-Forming",
       "Catalase (+)", "Oxidase (+)", "Motile", "Corkscrew / Darting Motility",
       "Sepsis / Septic Shock", "Acute Endocarditis", "Community-Acquired Meningitis",
-      "Unpasteurized Dairy / Livestock"
+      "Unpasteurized Dairy / Livestock", "Septic Thrombophlebitis (Lemierre)"
     ],
     triggerWords: [
       "Systemic & Intravascular Campylobacter (Bacteremia, Septic Thrombophlebitis, Endocarditis, Meningoencephalitis)",

@@ -136,7 +136,7 @@ window.BACTERIA_DB.push(
       "Non-Lactose Fermenter",
       "H2S Production (+)",
       "Watery Secretory Diarrhea", "Sepsis / Septic Shock", "Osteomyelitis / Septic Arthritis",
-      "Poultry / Eggs / Reptiles", "Unpasteurized Dairy / Livestock"
+      "Poultry / Eggs / Reptiles", "Unpasteurized Dairy / Livestock", "Inflammatory / Bloody Dysentery", "Reactive Arthritis (Reiter Syndrome)", "Transfusion-Associated Sepsis"
     ],
     triggerWords: [
       "Non-Lactose Fermenter (Colorless on MacConkey), Motile & H2S (+) (Black Colonies on HE/XLD)",
@@ -242,7 +242,7 @@ window.BACTERIA_DB.push(
       "Catalase (+)", "Oxidase (-)", "Non-Motile", "Actin-Rocket Motility",
       "Non-Lactose Fermenter",
       "28S rRNA Shiga / Shiga-Like Toxin",
-      "Inflammatory / Bloody Dysentery", "Hemolytic Uremic Syndrome (HUS)"
+      "Inflammatory / Bloody Dysentery", "Hemolytic Uremic Syndrome (HUS)", "Reactive Arthritis (Reiter Syndrome)"
     ],
     triggerWords: [
       "Non-Lactose Fermenter, Non-Motile & H2S (-) (vs. Salmonella)",
@@ -299,7 +299,7 @@ window.BACTERIA_DB.push(
       "Bipolar Safety-Pin Staining",
       "Polysaccharide Capsule",
       "Sepsis / Septic Shock", "Typical Lobar Pneumonia",
-      "Flea (Xenopsylla)", "Rabbits / Rodents"
+      "Flea (Xenopsylla)", "Rabbits / Rodents", "Lymphadenopathy / Bubo"
     ],
     triggerWords: [
       "Plague (Bubonic & Pneumonic)", "Bipolar Safety-Pin Staining Gram-Negative Rod",
@@ -353,7 +353,7 @@ window.BACTERIA_DB.push(
       "Catalase (+)", "Oxidase (-)", "Urease (+)", "Non-Motile",
       "Non-Lactose Fermenter", "Cold Enrichment (4°C)",
       "Inflammatory / Bloody Dysentery", "Pseudoappendicitis", "Sepsis / Septic Shock",
-      "Unpasteurized Dairy / Livestock", "Iron Overload / Cirrhosis Risk"
+      "Unpasteurized Dairy / Livestock", "Iron Overload / Cirrhosis Risk", "Reactive Arthritis (Reiter Syndrome)", "Transfusion-Associated Sepsis"
     ],
     triggerWords: [
       "Cold Enrichment (Grows at 4°C — Refrigerated Blood Transfusion Bacteremia/Shock)",
@@ -405,7 +405,7 @@ window.BACTERIA_DB.push(
       "Rapid Lactose Fermenter", "Heavily Mucoid Capsule",
       "Citrate (+)", "VP (+)",
       "Polysaccharide Capsule",
-      "Typical Lobar Pneumonia", "Cavitary / Granulomatous Lung Disease", "UTI / Pyelonephritis / Staghorn Calculi", "Sepsis / Septic Shock"
+      "Typical Lobar Pneumonia", "Cavitary / Granulomatous Lung Disease", "UTI / Pyelonephritis / Staghorn Calculi", "Sepsis / Septic Shock", "Septic Thrombophlebitis (Lemierre)", "Alcoholism / Aspiration Risk"
     ],
     triggerWords: [
       "Heavily Mucoid Lactose-Fermenting Colonies (Prominent Polysaccharide Capsule)",
@@ -598,7 +598,7 @@ window.BACTERIA_DB.push(
       "Catalase (+)", "Oxidase (-)", "Motile",
       "Rapid Lactose Fermenter", "Slow / Late Lactose Fermenter",
       "Citrate (+)", "VP (+)",
-      "Neonatal Meningitis", "Brain Abscess", "CF / Ventilator Pneumonia", "UTI / Pyelonephritis / Staghorn Calculi", "Sepsis / Septic Shock"
+      "Neonatal Meningitis", "Brain Abscess", "CF / Ventilator Pneumonia", "UTI / Pyelonephritis / Staghorn Calculi", "Sepsis / Septic Shock", "Septic Thrombophlebitis (Lemierre)"
     ],
     triggerWords: [
       "Hospital-Acquired Opportunists (Neonates & Immunocompromised)",

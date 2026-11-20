@@ -79,7 +79,7 @@ window.BACTERIA_DB.push(
       "Maltose + Glucose Fermenter",
       "Polysaccharide Capsule", "IgA1 Protease", "LOS (Lacks O-Antigen)",
       "Community-Acquired Meningitis", "Sepsis / Septic Shock", "Typical Lobar Pneumonia", "Osteomyelitis / Septic Arthritis",
-      "Asplenia / Complement Deficiency Risk"
+      "Asplenia / Complement Deficiency Risk", "Myocarditis / Pericarditis"
     ],
     triggerWords: [
       "Gram-Negative Kidney-Bean Diplococci", "Polysaccharide Capsule (Serogroups A, B, C, W135, X, Y)",

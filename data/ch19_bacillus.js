@@ -115,7 +115,7 @@ window.BACTERIA_DB.push(
       "Nagler Reaction / Lecithinase (+)",
       "Heat-Stable Emetic Toxin", "Heat-Labile Diarrheal Toxin", "Cytolytic / Pore-Forming Toxin",
       "Rapid-Onset Vomiting", "Watery Secretory Diarrhea", "Keratitis / Endophthalmitis", "Sepsis / Septic Shock",
-      "Reheated Rice", "Dental Procedures / Intravascular Catheters", "Intrinsically Cephalosporin-Resistant"
+      "Reheated Rice", "Dental Procedures / Intravascular Catheters", "Intrinsically Cephalosporin-Resistant", "Transfusion-Associated Sepsis"
     ],
     triggerWords: [
       "Spore-Forming Gram-Positive Rod", "Beta-Hemolytic & Motile (vs B. anthracis)",

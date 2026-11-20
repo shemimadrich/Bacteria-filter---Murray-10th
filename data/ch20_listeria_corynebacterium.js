@@ -14,7 +14,7 @@ window.BACTERIA_DB.push(
       "CAMP Test / Hippurate (+)",
       "Cytolytic / Pore-Forming Toxin",
       "Neonatal Meningitis", "Community-Acquired Meningitis", "Sepsis / Septic Shock", "Watery Secretory Diarrhea",
-      "Deli Meats / Soft Cheese", "Unpasteurized Dairy / Livestock", "Intrinsically Cephalosporin-Resistant"
+      "Deli Meats / Soft Cheese", "Unpasteurized Dairy / Livestock", "Intrinsically Cephalosporin-Resistant", "Transfusion-Associated Sepsis"
     ],
     triggerWords: [
       "Tumbling Motility at Room Temp (25°C)", "Actin-Rocket Motility (ActA)",
@@ -141,7 +141,7 @@ window.BACTERIA_DB.push(
       "Cysteine-Tellurite / Tinsdale Agar",
       "Elek Test (+)",
       "AB Toxin: Inhibits EF-2",
-      "Diphtheria Pseudomembrane", "Pharyngitis / Scarlet Fever", "Cutaneous Eschar / Ulcer", "Subacute / Culture-Negative Endocarditis"
+      "Diphtheria Pseudomembrane", "Pharyngitis / Scarlet Fever", "Cutaneous Eschar / Ulcer", "Subacute / Culture-Negative Endocarditis", "Myocarditis / Pericarditis"
     ],
     triggerWords: [
       "Club-Shaped / Chinese-Letter Pleomorphic Rods", "Metachromatic (Babes-Ernst) Granules",
@@ -339,6 +339,57 @@ window.BACTERIA_DB.push(
     glossary: `
       <ul class="list-disc pl-5 space-y-1">
         <li><b>PAS-Positive Macrophages:</b> Periodic Acid–Schiff staining highlights mucopolysaccharide-rich cell walls of intracellular <i>T. whipplei</i> inside lamina propria macrophages (Ziehl-Neelsen negative, unlike MAC).</li>
+      </ul>
+    `
+  }
+);
+
+window.BACTERIA_DB.push(
+  {
+    id: "arcanobacterium_haemolyticum",
+    name: "Arcanobacterium haemolyticum",
+    chapter: "Ch. 20: Listeria and Related Gram-Positive Bacteria",
+    tags: [
+      "Gram-Positive", "Non-Acid-Fast", "Club-Shaped / Chinese-Letter Diphtheroids",
+      "Facultative Anaerobe", "Extracellular", "Non-Spore-Forming",
+      "Catalase (-)", "Oxidase (-)", "Beta-Hemolytic (Complete)", "Non-Motile",
+      "Pharyngitis / Scarlet Fever", "Impetigo / Folliculitis / Abscesses", "Erysipelas / Cellulitis"
+    ],
+    triggerWords: [
+      "Exudative Pharyngitis + Scarlatiniform Rash in Teens & Young Adults", "Classic Mimic of Group A Strep (GAS)",
+      "Catalase (-) Pleomorphic Gram-Positive Diphtheroid Rod", "Reverse CAMP Test (+) (Inhibits S. aureus Beta-Hemolysin)",
+      "No Rheumatic Fever Risk & Macrolide Susceptible"
+    ],
+    overview: `
+      <p><b>What it is:</b> Formerly classified as <i>Corynebacterium haemolyticum</i>, <i>Arcanobacterium haemolyticum</i> is a facultatively anaerobic, catalase-negative, beta-hemolytic pleomorphic Gram-positive rod (diphtheroid) highlighted in Murray Chapter 79 as an important bacterial cause of <b>exudative pharyngitis in adolescents and young adults</b>.</p>
+      <p><b>Clinical Mimicry:</b> It closely mimics <i>Streptococcus pyogenes</i> (Group A Strep) pharyngitis and scarlet fever, often causing diagnostic confusion when rapid strep tests (RADT) return negative.</p>
+    `,
+    virulence: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Phospholipase D (Sphingomyelinase D):</b> Major exotoxin that damages host cell membranes, induces local pharyngeal inflammation/necrosis, and causes the characteristic <b>reverse CAMP reaction</b> on sheep blood agar.</li>
+        <li><b>Arcanolysin (Cholesterol-Dependent Cytolysin):</b> Pore-forming toxin that lyses human erythrocytes and pharyngeal epithelial cells.</li>
+      </ul>
+    `,
+    diseases: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Adolescent &amp; Young Adult Pharyngitis with Scarlatiniform Rash:</b> Presents with sore throat, pharyngeal exudates, cervical lymphadenopathy, and—in ~50% of patients—a pruritic, erythematous maculopapular or scarlatiniform rash on the trunk and extensor surfaces (sparing palms/soles; unlike GAS, it <b>does NOT cause rheumatic fever</b>).</li>
+        <li><b>Wound &amp; Soft-Tissue Infections:</b> Can cause chronic skin ulcers, cellulitis, and abscesses (especially in older or diabetic patients) and rarely invasive sepsis or Lemierre-like peritonsillar infections.</li>
+      </ul>
+    `,
+    diagnosis: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Culture &amp; Hemolysis:</b> Slow-growing (48 hours) small colonies showing narrow <b>beta-hemolysis</b> (more prominent on human or rabbit blood agar than sheep blood agar); <b>Catalase (-)</b> (distinguishes it from <i>Corynebacterium</i> species, which are catalase-positive).</li>
+        <li><b>Reverse CAMP Test (+):</b> Phospholipase D <b>inhibits</b> the beta-hemolysin of <i>Staphylococcus aureus</i>, producing a distinctive zone of inhibited hemolysis; confirmed rapidly by <b>MALDI-TOF MS</b>.</li>
+      </ul>
+    `,
+    treatment: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Macrolides (Erythromycin / Azithromycin) or Beta-Lactams:</b> Oral <b>erythromycin</b> or <b>azithromycin</b> is commonly favored because penicillin clinical failures/tolerance have been reported; clindamycin and doxycycline are also active. Note: Virtually all strains are <b>resistant to trimethoprim-sulfamethoxazole (TMP-SMX)</b>.</li>
+      </ul>
+    `,
+    glossary: `
+      <ul class="list-disc pl-5 space-y-1">
+        <li><b>Reverse CAMP Test:</b> Inhibition of <i>S. aureus</i> beta-lysin hemolysis by bacterial phospholipase D (classic for <i>Arcanobacterium haemolyticum</i> and <i>Corynebacterium pseudotuberculosis</i>).</li>
       </ul>
     `
   }

@@ -11,7 +11,7 @@ window.BACTERIA_DB.push(
       "Obligate Aerobe", "Facultative Intracellular", "Non-Spore-Forming",
       "Slow-Growing (>7 Days)",
       "Bacillary Angiomatosis", "Subacute / Culture-Negative Endocarditis", "Sepsis / Septic Shock",
-      "Cat / Dog Bite or Scratch", "Flea (Xenopsylla)", "AIDS / Low CD4 (<50) Risk"
+      "Cat / Dog Bite or Scratch", "Flea (Xenopsylla)", "AIDS / Low CD4 (<50) Risk", "Lymphadenopathy / Bubo"
     ],
     triggerWords: [
       "Cat-Scratch Disease (Benign Chronic Regional Lymphadenopathy in Children)",
@@ -226,7 +226,7 @@ window.BACTERIA_DB.push(
       "Catalase (+)", "Oxidase (+)", "Urease (+)", "Non-Motile",
       "Slow-Growing (>7 Days)",
       "Relapsing / Undulant Fever", "Sepsis / Septic Shock", "Osteomyelitis / Septic Arthritis",
-      "Unpasteurized Dairy / Livestock"
+      "Unpasteurized Dairy / Livestock", "Lymphadenopathy / Bubo"
     ],
     triggerWords: [
       "Undulant Fever / Brucellosis / Bang Disease / Malta Fever",
@@ -331,7 +331,7 @@ window.BACTERIA_DB.push(
       "BCYE Agar (Cysteine & Iron)",
       "Polysaccharide Capsule",
       "Cutaneous Eschar / Ulcer", "Typical Lobar Pneumonia", "Sepsis / Septic Shock",
-      "Hard Tick (Ixodes / Dermacentor / Amblyomma)", "Rabbits / Rodents", "Cat / Dog Bite or Scratch"
+      "Hard Tick (Ixodes / Dermacentor / Amblyomma)", "Rabbits / Rodents", "Cat / Dog Bite or Scratch", "Lymphadenopathy / Bubo"
     ],
     triggerWords: [
       "Tularemia (Rabbit Fever / Tick Fever / Deerfly Fever)",
@@ -497,7 +497,7 @@ window.BACTERIA_DB.push(
       "Slow-Growing (>7 Days)",
       "Polysaccharide Capsule",
       "Sepsis / Septic Shock", "Erysipelas / Cellulitis", "Community-Acquired Meningitis", "Subacute / Culture-Negative Endocarditis",
-      "Cat / Dog Bite or Scratch", "Asplenia / Complement Deficiency Risk", "Iron Overload / Cirrhosis Risk"
+      "Cat / Dog Bite or Scratch", "Asplenia / Complement Deficiency Risk", "Iron Overload / Cirrhosis Risk", "Alcoholism / Aspiration Risk"
     ],
     triggerWords: [
       "Dog Bite or Lick in Asplenic / Alcoholic Patient", "Fulminant Sepsis, DIC & Symmetrical Peripheral Gangrene",

@@ -13,7 +13,7 @@ window.BACTERIA_DB.push(
       "Löwenstein-Jensen / Middlebrook Agar", "Slow-Growing (>7 Days)",
       "Niacin + Nitrate (+)",
       "Mycolic Acids & Cord Factor",
-      "Cavitary / Granulomatous Lung Disease", "Community-Acquired Meningitis", "Osteomyelitis / Septic Arthritis", "Sepsis / Septic Shock"
+      "Cavitary / Granulomatous Lung Disease", "Community-Acquired Meningitis", "Osteomyelitis / Septic Arthritis", "Sepsis / Septic Shock", "Myocarditis / Pericarditis", "Lymphadenopathy / Bubo"
     ],
     triggerWords: [
       "Strongly Acid-Fast (70–90 Carbon Mycolic Acids)", "Blocks Phagosome-Lysosome Fusion (EEA1)",
@@ -455,7 +455,7 @@ window.BACTERIA_DB.push(
       "Catalase (+)", "Oxidase (-)", "Urease (+)", "Non-Motile",
       "Löwenstein-Jensen / Middlebrook Agar", "Slow-Growing (>7 Days)", "Scotochromogen",
       "Mycolic Acids & Cord Factor",
-      "Impetigo / Folliculitis / Abscesses", "Cavitary / Granulomatous Lung Disease"
+      "Impetigo / Folliculitis / Abscesses", "Cavitary / Granulomatous Lung Disease", "Lymphadenopathy / Bubo"
     ],
     triggerWords: [
       "Runyon Group II Scotochromogen (Yellow-Orange Pigment in Dark & Light)", "Pediatric Cervical Lymphadenitis (Scrofula)",

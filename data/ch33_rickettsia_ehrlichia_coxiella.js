@@ -13,7 +13,7 @@ window.BACTERIA_DB.push(
       "Actin-Rocket Motility",
       "Cell Culture Only",
       "Rash on Palms & Soles", "Sepsis / Septic Shock",
-      "Hard Tick (Ixodes / Dermacentor / Amblyomma)", "Rabbits / Rodents", "Intrinsically Cephalosporin-Resistant"
+      "Hard Tick (Ixodes / Dermacentor / Amblyomma)", "Rabbits / Rodents", "Intrinsically Cephalosporin-Resistant", "Myocarditis / Pericarditis"
     ],
     triggerWords: [
       "Rocky Mountain Spotted Fever (RMSF — #1 Rickettsial Pathogen in US; NC, OK, AR, TN, MO)",
@@ -211,7 +211,7 @@ window.BACTERIA_DB.push(
       "Obligate Aerobe", "Obligate Intracellular", "Non-Spore-Forming",
       "Cell Culture Only",
       "Sepsis / Septic Shock",
-      "Chigger / Mite", "Rabbits / Rodents", "Intrinsically Cephalosporin-Resistant"
+      "Chigger / Mite", "Rabbits / Rodents", "Intrinsically Cephalosporin-Resistant", "Myocarditis / Pericarditis"
     ],
     triggerWords: [
       "Scrub Typhus ('Mite Disease' — Southeast Asia, Japan, China, India, Northern Australia)",

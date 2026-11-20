@@ -73,7 +73,7 @@ window.BACTERIA_DB.push(
       "Slow-Growing (>7 Days)",
       "Two-Tier EIA + Western Blot",
       "Erythema Migrans", "Osteomyelitis / Septic Arthritis", "Community-Acquired Meningitis",
-      "Hard Tick (Ixodes / Dermacentor / Amblyomma)", "Rabbits / Rodents"
+      "Hard Tick (Ixodes / Dermacentor / Amblyomma)", "Rabbits / Rodents", "Myocarditis / Pericarditis"
     ],
     triggerWords: [
       "Lyme Disease (#1 Vector-Borne Disease in the United States!)",

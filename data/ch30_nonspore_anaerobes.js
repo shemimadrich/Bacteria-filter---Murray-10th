@@ -64,7 +64,7 @@ window.BACTERIA_DB.push(
       "Obligate Anaerobe", "Aerotolerant Anaerobe", "Extracellular", "Non-Spore-Forming",
       "Catalase (+)", "Non-Motile",
       "Impetigo / Folliculitis / Abscesses", "Subacute / Culture-Negative Endocarditis", "Community-Acquired Meningitis",
-      "Dental Procedures / Intravascular Catheters"
+      "Dental Procedures / Intravascular Catheters", "Keratitis / Endophthalmitis", "Osteomyelitis / Septic Arthritis"
     ],
     triggerWords: [
       "Formerly Propionibacterium acnes (Renamed Cutibacterium in 2016)",
@@ -206,7 +206,7 @@ window.BACTERIA_DB.push(
       "Gram-Positive", "Non-Acid-Fast", "Cocci in Chains or Pairs",
       "Obligate Anaerobe", "Extracellular", "Non-Spore-Forming",
       "Non-Motile",
-      "Brain Abscess", "Epiglottitis / Otitis / Sinusitis", "Impetigo / Folliculitis / Abscesses", "Erysipelas / Cellulitis", "Osteomyelitis / Septic Arthritis"
+      "Brain Abscess", "Epiglottitis / Otitis / Sinusitis", "Impetigo / Folliculitis / Abscesses", "Erysipelas / Cellulitis", "Osteomyelitis / Septic Arthritis", "Alcoholism / Aspiration Risk"
     ],
     triggerWords: [
       "Polymicrobial Endogenous Anaerobic Infections (Oral, GI, GU & Skin Flora)",
@@ -255,7 +255,7 @@ window.BACTERIA_DB.push(
       "Bile Esculin Agar (Black)",
       "Polysaccharide Capsule",
       "Impetigo / Folliculitis / Abscesses", "Necrotizing Fasciitis / Gas Gangrene", "Sepsis / Septic Shock", "Watery Secretory Diarrhea", "Brain Abscess",
-      "Intrinsically Cephalosporin-Resistant", "20% Bile Resistant (BBE Agar)"
+      "Intrinsically Cephalosporin-Resistant", "20% Bile Resistant (BBE Agar)", "Septic Thrombophlebitis (Lemierre)"
     ],
     triggerWords: [
       "Most Important Anaerobic Gram-Negative Rod (#1 Anaerobe in Intraabdominal Abscesses & Bacteremia)",
@@ -308,7 +308,7 @@ window.BACTERIA_DB.push(
       "Gram-Negative", "Gram-Variable / Poorly Staining", "Non-Acid-Fast", "Fusiform / Spindle-Shaped Rods",
       "Obligate Anaerobe", "Extracellular", "Non-Spore-Forming",
       "Non-Motile",
-      "Brain Abscess", "Epiglottitis / Otitis / Sinusitis", "Pharyngitis / Scarlet Fever", "Sepsis / Septic Shock"
+      "Brain Abscess", "Epiglottitis / Otitis / Sinusitis", "Pharyngitis / Scarlet Fever", "Sepsis / Septic Shock", "Septic Thrombophlebitis (Lemierre)", "Alcoholism / Aspiration Risk"
     ],
     triggerWords: [
       "Thin, Elongated, Spindle-Shaped (Fusiform) Anaerobic Gram-Negative Rods with Tapered Ends",
@@ -355,7 +355,7 @@ window.BACTERIA_DB.push(
       "Obligate Anaerobe", "Extracellular", "Non-Spore-Forming",
       "Non-Motile",
       "Polysaccharide Capsule",
-      "Brain Abscess", "Epiglottitis / Otitis / Sinusitis", "Impetigo / Folliculitis / Abscesses", "Urethritis / Cervicitis / PID"
+      "Brain Abscess", "Epiglottitis / Otitis / Sinusitis", "Impetigo / Folliculitis / Abscesses", "Urethritis / Cervicitis / PID", "Alcoholism / Aspiration Risk"
     ],
     triggerWords: [
       "Very Small, Faintly Staining Anaerobic Gram-Negative Rods (Pigmented Porphyromonas)",

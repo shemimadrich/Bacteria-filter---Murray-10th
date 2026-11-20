@@ -73,7 +73,7 @@ window.BACTERIA_DB.push(
       "Non-Lactose Fermenter", "TCBS Agar", "Halophilic (Salt-Loving)",
       "Cytolytic / Pore-Forming Toxin",
       "Watery Secretory Diarrhea", "Erysipelas / Cellulitis",
-      "Fish / Shellfish / Marine Water"
+      "Fish / Shellfish / Marine Water", "Inflammatory / Bloody Dysentery"
     ],
     triggerWords: [
       "Halophilic Curved Gram-Negative Rod (Requires NaCl Supplement)",

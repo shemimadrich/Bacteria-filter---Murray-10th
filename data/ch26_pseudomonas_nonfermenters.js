@@ -15,7 +15,7 @@ window.BACTERIA_DB.push(
       "CF / Ventilator Pneumonia", "Impetigo / Folliculitis / Abscesses", "Cutaneous Eschar / Ulcer",
       "Epiglottitis / Otitis / Sinusitis", "Keratitis / Endophthalmitis", "UTI / Pyelonephritis / Staghorn Calculi",
       "Osteomyelitis / Septic Arthritis", "Sepsis / Septic Shock", "Acute Endocarditis",
-      "Hot Tubs / Burn Wounds / Contact Lenses", "Dental Procedures / Intravascular Catheters"
+      "Hot Tubs / Burn Wounds / Contact Lenses", "Dental Procedures / Intravascular Catheters", "Septic Thrombophlebitis (Lemierre)"
     ],
     triggerWords: [
       "Strictly Aerobic, Non-Fermenting, Oxidase (+) Gram-Negative Rod",

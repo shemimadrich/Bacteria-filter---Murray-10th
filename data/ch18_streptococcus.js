@@ -13,7 +13,7 @@ window.BACTERIA_DB.push(
       "Bacitracin Susceptible", "PYR (+)", "Lancefield Group A", "ASO / Anti-DNase B Titers",
       "M Protein", "Polysaccharide Capsule", "Superantigen (TSST-1 / Enterotoxins / Spe)", "Cytolytic / Pore-Forming Toxin",
       "Pharyngitis / Scarlet Fever", "Impetigo / Folliculitis / Abscesses", "Erysipelas / Cellulitis",
-      "Necrotizing Fasciitis / Gas Gangrene", "Sepsis / Septic Shock", "Rheumatic Fever / PSGN"
+      "Necrotizing Fasciitis / Gas Gangrene", "Sepsis / Septic Shock", "Rheumatic Fever / PSGN", "Osteomyelitis / Septic Arthritis", "Epiglottitis / Otitis / Sinusitis", "Myocarditis / Pericarditis"
     ],
     triggerWords: [
       "Group A Strep (GAS)", "Beta-Hemolytic (Large Zone)", "Bacitracin Susceptible", "PYR (+)",
@@ -291,7 +291,7 @@ window.BACTERIA_DB.push(
       "Optochin Susceptible + Bile Soluble", "Urinary Antigen Test (+)",
       "Polysaccharide Capsule", "IgA1 Protease", "Cytolytic / Pore-Forming Toxin",
       "Typical Lobar Pneumonia", "Epiglottitis / Otitis / Sinusitis", "Community-Acquired Meningitis",
-      "Sepsis / Septic Shock", "Asplenia / Complement Deficiency Risk"
+      "Sepsis / Septic Shock", "Asplenia / Complement Deficiency Risk", "Myocarditis / Pericarditis", "Alcoholism / Aspiration Risk"
     ],
     triggerWords: [
       "Lancet-Shaped Gram-Positive Diplococci", "Alpha-Hemolytic (Umbilicated / Dimpled Colonies)",
@@ -368,7 +368,7 @@ window.BACTERIA_DB.push(
       "Bile Esculin Agar (Black)", "Halophilic (Salt-Loving)", "Growth in 6.5% NaCl", "PYR (+)", "Lancefield Group D",
       "Biofilm / Slime Layer",
       "UTI / Pyelonephritis / Staghorn Calculi", "Subacute / Culture-Negative Endocarditis", "Sepsis / Septic Shock",
-      "Dental Procedures / Intravascular Catheters", "Intrinsically Cephalosporin-Resistant"
+      "Dental Procedures / Intravascular Catheters", "Intrinsically Cephalosporin-Resistant", "Colon Cancer Association"
     ],
     triggerWords: [
       "Lancefield Group D", "Bile Esculin (+) (Black Precipitate)", "Growth in 6.5% NaCl", "PYR (+)",

@@ -14,7 +14,7 @@ window.BACTERIA_DB.push(
       "Cold Agglutinins (Anti-I IgM)",
       "Superantigen (TSST-1 / Enterotoxins / Spe)",
       "Atypical Walking Pneumonia", "Pharyngitis / Scarlet Fever",
-      "Intrinsically Cephalosporin-Resistant", "Intrinsically Vancomycin-Resistant"
+      "Intrinsically Cephalosporin-Resistant", "Intrinsically Vancomycin-Resistant", "Myocarditis / Pericarditis"
     ],
     triggerWords: [
       "Smallest Free-Living Bacterium (Passes 0.45-μm Filters; Eaton Agent)",
