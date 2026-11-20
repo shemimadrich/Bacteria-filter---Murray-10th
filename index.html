@@ -14,17 +14,34 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
 
-  <!-- Header -->
-  <header class="bg-slate-800/95 backdrop-blur border-b border-slate-700 px-6 py-4 sticky top-0 z-20 flex flex-wrap justify-between items-center gap-3 shadow-lg">
-    <div>
-      <h1 class="text-xl font-bold text-teal-400">Medical Bacteriology Diagnostic Navigator</h1>
-      <p class="text-xs text-slate-400">Modular Multi-Path Differential Engine (Murray's Medical Microbiology, 10th Ed. &bull; Ch. 17–34 + Syndromic Ch. 78–85)</p>
+  <!-- Collapsible Header (Auto-collapses on scroll down + manual arrow toggle) -->
+  <header id="main-header" class="bg-slate-800/95 backdrop-blur border-b border-slate-700 px-4 sm:px-6 py-3 sticky top-0 z-20 shadow-lg transition-all duration-200">
+    <div class="flex justify-between items-center gap-3">
+      <div class="min-w-0">
+        <div class="flex items-center gap-2.5">
+          <h1 class="text-base sm:text-xl font-bold text-teal-400 truncate">Medical Bacteriology Diagnostic Navigator</h1>
+          <span id="header-mini-badge" class="hidden text-[11px] bg-teal-500/20 text-teal-300 border border-teal-500/30 px-2 py-0.5 rounded-full font-medium shrink-0"></span>
+        </div>
+        <p id="header-subtitle" class="text-xs text-slate-400 mt-0.5">Modular Multi-Path Differential Engine (Murray's Medical Microbiology, 10th Ed. &bull; Ch. 17–34 + Syndromic Ch. 78–85)</p>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="header-mini-reset" onclick="resetFilters()" title="Reset all filters"
+          class="hidden bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 px-2 py-1 rounded-lg text-[11px] font-medium transition">
+          Reset
+        </button>
+        <button id="header-toggle-btn" onclick="toggleHeaderCollapsed()" aria-expanded="true" aria-label="Collapse or expand top bar" title="Collapse or expand top bar"
+          class="bg-slate-900 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 px-2.5 py-1 rounded-lg text-xs font-medium transition flex items-center gap-1">
+          <span id="header-toggle-label" class="hidden sm:inline text-[11px]">Hide Bar</span>
+          <span id="header-toggle-arrow" class="text-xs leading-none">&#9650;</span>
+        </button>
+      </div>
     </div>
-    <div class="flex flex-wrap items-center gap-2">
+
+    <div id="header-controls" class="mt-3 flex flex-wrap items-center gap-2 transition-all">
       <input id="search-input" type="text" placeholder="Search bacteria, toxins, drugs... (press /)"
-        class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 w-60 sm:w-68">
+        class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 w-full sm:w-64">
       <select id="chapter-select" aria-label="Filter by chapter"
-        class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 max-w-[200px]">
+        class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 max-w-full sm:max-w-[200px]">
         <option value="ALL">All Chapters (18)</option>
       </select>
       <button id="sort-btn" onclick="toggleSort()" title="Toggle sort order"
@@ -49,7 +66,7 @@
   <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
     <!-- Left Column: Sticky Scrollable 10 Collapsible Master Categories -->
-    <aside class="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto pr-1 space-y-3">
+    <aside id="filter-sidebar" class="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-32 lg:max-h-[calc(100vh-8.5rem)] lg:overflow-y-auto pr-1 space-y-3 transition-all duration-200">
       <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
         <div class="flex justify-between items-center mb-2">
           <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-300">Diagnostic Criteria</h2>
@@ -630,6 +647,8 @@
       document.getElementById("active-count").textContent = `${activeFilters.size} selected`;
       document.getElementById("match-count").textContent = matching.length;
       document.getElementById("total-count").textContent = window.BACTERIA_DB.length ? ` / ${window.BACTERIA_DB.length}` : "";
+      const miniBadge = document.getElementById("header-mini-badge");
+      if (miniBadge) miniBadge.textContent = `${matching.length} match${matching.length === 1 ? "" : "es"}`;
 
       if (selectedBacteriumId && !matching.some(b => b.id === selectedBacteriumId)) {
         selectedBacteriumId = null;
@@ -850,6 +869,80 @@
         else if (selectedBacteriumId) closeDetail();
       }
     });
+
+    // Collapsible Top Bar (Manual Toggle + Smart Scroll Auto-Collapse)
+    let headerCollapsed = false;
+    let userPinnedHeader = null; // null = auto, true = manually collapsed, false = manually expanded
+    let lastScrollY = window.scrollY;
+
+    function applyHeaderState(collapsed) {
+      headerCollapsed = collapsed;
+      const controls = document.getElementById("header-controls");
+      const subtitle = document.getElementById("header-subtitle");
+      const arrow = document.getElementById("header-toggle-arrow");
+      const label = document.getElementById("header-toggle-label");
+      const btn = document.getElementById("header-toggle-btn");
+      const miniBadge = document.getElementById("header-mini-badge");
+      const miniReset = document.getElementById("header-mini-reset");
+      const header = document.getElementById("main-header");
+      const sidebar = document.getElementById("filter-sidebar");
+
+      controls.classList.toggle("hidden", collapsed);
+      subtitle.classList.toggle("hidden", collapsed);
+      miniBadge.classList.toggle("hidden", !collapsed);
+      miniReset.classList.toggle("hidden", !collapsed);
+      arrow.innerHTML = collapsed ? "&#9660;" : "&#9650;";
+      label.textContent = collapsed ? "Show Bar" : "Hide Bar";
+      btn.setAttribute("aria-expanded", String(!collapsed));
+
+      if (collapsed) {
+        header.classList.remove("py-3");
+        header.classList.add("py-2");
+        if (sidebar) {
+          sidebar.classList.remove("lg:top-32", "lg:max-h-[calc(100vh-8.5rem)]");
+          sidebar.classList.add("lg:top-16", "lg:max-h-[calc(100vh-5rem)]");
+        }
+      } else {
+        header.classList.remove("py-2");
+        header.classList.add("py-3");
+        if (sidebar) {
+          sidebar.classList.remove("lg:top-16", "lg:max-h-[calc(100vh-5rem)]");
+          sidebar.classList.add("lg:top-32", "lg:max-h-[calc(100vh-8.5rem)]");
+        }
+      }
+    }
+
+    function toggleHeaderCollapsed() {
+      const next = !headerCollapsed;
+      userPinnedHeader = next;
+      applyHeaderState(next);
+    }
+
+    window.addEventListener("scroll", () => {
+      const currentY = window.scrollY;
+      const activeTag = document.activeElement?.tagName;
+      const typingInHeader = document.getElementById("main-header")?.contains(document.activeElement) && (activeTag === "INPUT" || activeTag === "SELECT");
+
+      if (!typingInHeader) {
+        if (currentY > 120 && currentY > lastScrollY + 10 && userPinnedHeader !== false && !headerCollapsed) {
+          applyHeaderState(true);
+        } else if (currentY < 40 && userPinnedHeader !== true && headerCollapsed) {
+          applyHeaderState(false);
+          userPinnedHeader = null;
+        }
+      }
+      lastScrollY = currentY;
+    }, { passive: true });
+
+    // Also auto-expand header when pressing '/' to search
+    const origKeyHandler = document.onkeydown;
+    document.addEventListener("keydown", (e) => {
+      const tag = document.activeElement?.tagName;
+      if (e.key === "/" && tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT" && headerCollapsed) {
+        applyHeaderState(false);
+        userPinnedHeader = false;
+      }
+    }, true);
 
     loadAllChapters();
   </script>
