@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Murray's Bacteriology Navigator</title>
+  <title>Murray's Bacteriology Navigator (v2.0)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     // Global Database Array - Chapter files automatically plug into this!
@@ -13,30 +13,62 @@
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
 
   <!-- Header -->
-  <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 sticky top-0 z-20 flex flex-wrap justify-between items-center gap-4 shadow-lg">
+  <header class="bg-slate-800/95 backdrop-blur border-b border-slate-700 px-6 py-4 sticky top-0 z-20 flex flex-wrap justify-between items-center gap-3 shadow-lg">
     <div>
       <h1 class="text-xl font-bold text-teal-400">Medical Bacteriology Diagnostic Navigator</h1>
-      <p class="text-xs text-slate-400">Modular Multi-Path Differential Engine (Murray's Medical Microbiology)</p>
+      <p class="text-xs text-slate-400">Modular Multi-Path Differential Engine (Murray's Medical Microbiology, 10th Ed.)</p>
     </div>
-    <div class="flex items-center gap-3">
-      <input id="search-input" type="text" placeholder="Search bacteria, toxins, diseases..." 
-        class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 w-72">
-      <button onclick="resetFilters()" class="bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+    <div class="flex flex-wrap items-center gap-2.5">
+      <div class="relative">
+        <input id="search-input" type="text" placeholder="Search bacteria, toxins, drugs... (press /)"
+          class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 w-64 sm:w-72">
+      </div>
+      <select id="chapter-select" aria-label="Filter by chapter"
+        class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 max-w-[210px]">
+        <option value="ALL">All Chapters (18)</option>
+      </select>
+      <button id="sort-btn" onclick="toggleSort()" title="Toggle sort order"
+        class="bg-slate-900 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium transition">
+        Sort: Chapter
+      </button>
+      <button id="quiz-btn" onclick="toggleQuizMode()" title="Hide organism names on cards for active recall"
+        class="bg-slate-900 hover:bg-slate-700 text-amber-300 border border-amber-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition">
+        Quiz Mode: Off
+      </button>
+      <button onclick="resetFilters()" class="bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition">
         Reset All
       </button>
     </div>
   </header>
 
-  <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-    
-    <!-- Left Column: 10 Collapsible Master Categories -->
-    <aside class="lg:col-span-5 xl:col-span-4 space-y-3">
+  <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+    <!-- Left Column: Sticky Scrollable 10 Collapsible Master Categories -->
+    <aside class="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto pr-1 space-y-3">
       <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
-        <div class="flex justify-between items-center mb-3">
+        <div class="flex justify-between items-center mb-2">
           <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-300">Diagnostic Criteria</h2>
           <span id="active-count" class="text-xs bg-teal-500/20 text-teal-300 px-2.5 py-0.5 rounded-full font-medium">0 selected</span>
         </div>
-        <p class="text-xs text-slate-400 mb-4">Click any category below to expand options. Incompatible paths automatically grey out.</p>
+        <p class="text-xs text-slate-400 mb-3">Expand categories or search criteria below. Incompatible paths automatically grey out.</p>
+
+        <!-- Sidebar Filter Search + Quick Controls -->
+        <div class="space-y-2 mb-3">
+          <input id="filter-search-input" type="text" placeholder="Find a filter option (e.g., Urease, Tick, IgA1)..."
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-teal-500">
+          <div class="flex items-center justify-between gap-2 text-[11px]">
+            <label class="flex items-center gap-1.5 text-slate-300 cursor-pointer select-none">
+              <input id="hide-zero-toggle" type="checkbox" class="accent-teal-500 rounded">
+              <span>Hide 0-match options</span>
+            </label>
+            <div class="flex items-center gap-2">
+              <button onclick="setAllAccordions(true)" class="text-teal-400 hover:text-teal-300 underline">Expand all</button>
+              <span class="text-slate-600">|</span>
+              <button onclick="setAllAccordions(false)" class="text-slate-400 hover:text-slate-300 underline">Collapse all</button>
+            </div>
+          </div>
+        </div>
+
         <div id="filter-container" class="space-y-2"></div>
       </div>
     </aside>
@@ -50,11 +82,11 @@
       <div id="detail-panel" class="hidden bg-slate-800 border-2 border-teal-500/70 rounded-xl p-6 space-y-4 shadow-2xl"></div>
 
       <!-- Results Counter -->
-      <div class="flex justify-between items-center pt-1">
+      <div class="flex flex-wrap justify-between items-center gap-2 pt-1">
         <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400">
-          Candidate Pathogens (<span id="match-count" class="text-teal-400">0</span>)
+          Candidate Pathogens (<span id="match-count" class="text-teal-400">0</span><span id="total-count" class="text-slate-500"></span>)
         </h2>
-        <span class="text-xs text-slate-400">Click any card to open full profile</span>
+        <span class="text-xs text-slate-400">Click any card to open full profile &bull; Press <kbd class="bg-slate-800 border border-slate-700 px-1.5 py-0.5 rounded text-[10px]">Esc</kbd> to close</span>
       </div>
 
       <!-- Bacteria Grid -->
@@ -63,7 +95,7 @@
   </div>
 
   <script>
-    // 10-Category Master Taxonomy
+    // 10-Category Master Taxonomy (v2.0 — 227 options, 100% active, 0 subset overlaps)
     const filterCategories = [
       {
         id: "cat1",
@@ -82,7 +114,8 @@
           "Regular / Uniform Rods", "Boxcar-Shaped Rods", "Club-Shaped / Chinese-Letter Diphtheroids", "Coccobacilli / Tiny Pleomorphic Rods",
           "Fusiform / Spindle-Shaped Rods", "Branching Filamentous Rods", "Beaded / Cording Rods",
           "Comma-Shaped / Curved Rods", "Gull-Wing / S-Shaped / Helical Rods", "Thin Tightly Coiled Spirochetes",
-          "Loosely Coiled Thick Spirochetes", "Hooked-End Spirochetes", "Elementary & Reticulate Bodies", "Intraleukocytic Morulae"
+          "Loosely Coiled Thick Spirochetes", "Hooked-End Spirochetes", "Elementary & Reticulate Bodies",
+          "Intraleukocytic Morulae", "Monocyte Morulae (HME)", "Granulocyte Morulae (HGA)"
         ]
       },
       {
@@ -111,11 +144,11 @@
           "Chocolate Agar (X & V Factors)", "Chocolate Agar (X Factor Only)", "Chocolate Agar (V Factor Only)",
           "Thayer-Martin Media", "BCYE Agar (Cysteine & Iron)", "Cysteine-Tellurite / Tinsdale Agar", "TCBS Agar",
           "Bordet-Gengou / Regan-Lowe Agar", "Löwenstein-Jensen / Middlebrook Agar", "Mannitol Salt Agar (Yellow)",
-          "Bile Esculin Agar (Black)", "Eaton Agar (Fried-Egg Colonies)", "Cell Culture Only", "Unculturable In Vitro",
+          "Bile Esculin Agar (Black)", "20% Bile Resistant (BBE Agar)", "Eaton Agar (Fried-Egg Colonies)", "Cell Culture Only", "Unculturable In Vitro",
           "Cold Enrichment (4°C)", "Thermophilic (42°C)", "Halophilic (Salt-Loving)", "Slow-Growing (>7 Days)", "Rapidly Growing Mycobacteria (<7 Days)",
           "Golden-Yellow Colonies", "Blue-Green Pigment + Grape Odor", "Red Pigment (Prodigiosin)", "Salmon-Pink Colonies",
-          "Yellow Sulfur Granules", "Photochromogen", "Scotochromogen", "Medusa Head Colonies", "Molar Tooth / Breadcrumb Colonies",
-          "Agar Pitting + Bleach Odor", "Butterscotch Odor", "Musty / Mouse Nest Odor", "Horse Stable Odor", "Heavily Mucoid Capsule"
+          "Yellow Sulfur Granules", "Photochromogen", "Scotochromogen", "Nonchromogen (Runyon III)", "Medusa Head Colonies", "Molar Tooth / Breadcrumb Colonies",
+          "Star-Shaped Colonies", "Agar Pitting + Bleach Odor", "Butterscotch Odor", "Musty / Mouse Nest Odor", "Horse Stable Odor", "Heavily Mucoid Capsule"
         ]
       },
       {
@@ -158,9 +191,9 @@
           "Impetigo / Folliculitis / Abscesses", "Erysipelas / Cellulitis", "Necrotizing Fasciitis / Gas Gangrene",
           "Scalded Skin Syndrome (SSSS)", "Cutaneous Eschar / Ulcer", "Erythema Migrans", "Rash on Palms & Soles", "Osteomyelitis / Septic Arthritis",
           "Pharyngitis / Scarlet Fever", "Diphtheria Pseudomembrane", "Epiglottitis / Otitis / Sinusitis", "Typical Lobar Pneumonia",
-          "Atypical Walking Pneumonia", "Cavitary / Granulomatous Lung Disease", "Paroxysmal Whooping Cough", "CF / Ventilator Pneumonia",
+          "Atypical Walking Pneumonia", "Cavitary / Granulomatous Lung Disease", "Mediastinal Widening", "Paroxysmal Whooping Cough", "CF / Ventilator Pneumonia",
           "Sepsis / Septic Shock", "Acute Endocarditis", "Subacute / Culture-Negative Endocarditis", "Relapsing / Undulant Fever",
-          "Rheumatic Fever / PSGN", "Bacillary Angiomatosis", "Neonatal Meningitis", "Community-Acquired Meningitis",
+          "Weil Disease (Jaundice + Renal Failure)", "Rheumatic Fever / PSGN", "Bacillary Angiomatosis", "Neonatal Meningitis", "Community-Acquired Meningitis",
           "Brain Abscess", "Spastic Paralysis / Tetanus", "Flaccid Paralysis / Botulism", "Neurosyphilis",
           "Rapid-Onset Vomiting", "Watery Secretory Diarrhea", "Inflammatory / Bloody Dysentery", "Pseudomembranous Colitis",
           "Peptic Ulcer / Gastric Cancer", "Enteric (Typhoid) Fever", "Pseudoappendicitis", "Hemolytic Uremic Syndrome (HUS)",
@@ -177,7 +210,7 @@
           "Poultry / Eggs / Reptiles", "Fish / Shellfish / Marine Water", "Armadillos", "Reheated Rice", "Canned Goods / Honey",
           "Undercooked Ground Beef", "Deli Meats / Soft Cheese", "Cooling Towers / Showers / AC", "Hot Tubs / Burn Wounds / Contact Lenses",
           "Dental Procedures / Intravascular Catheters", "Asplenia / Complement Deficiency Risk", "CGD Patient Risk",
-          "Iron Overload / Cirrhosis Risk", "Colon Cancer Association", "Intrinsically Cephalosporin-Resistant", "Intrinsically Vancomycin-Resistant"
+          "AIDS / Low CD4 (<50) Risk", "Iron Overload / Cirrhosis Risk", "Colon Cancer Association", "Intrinsically Cephalosporin-Resistant", "Intrinsically Vancomycin-Resistant"
         ]
       }
     ];
@@ -205,18 +238,74 @@
     ];
 
     let activeFilters = new Set();
-    let openAccordions = new Set(["cat1"]); // Open Category 1 by default
+    let openAccordions = new Set(["cat1"]);
     let searchQuery = "";
+    let filterSearchQuery = "";
+    let selectedChapter = "ALL";
+    let sortMode = "chapter"; // "chapter" or "alpha"
+    let quizMode = false;
+    let hideZeroOptions = false;
     let selectedBacteriumId = null;
+    let lastMatchCount = null;
+    let searchIndex = new Map();
 
-    // Dynamically load chapter files without crashing if some aren't created yet
+    function stripHtml(html) {
+      return (html || "").replace(/<[^>]+>/g, " ").replace(/&[a-z0-9#]+;/gi, " ").replace(/\s+/g, " ").trim().toLowerCase();
+    }
+
+    function getChapterNum(chapterStr) {
+      const m = (chapterStr || "").match(/Ch\.\s*(\d+)/i);
+      return m ? parseInt(m[1], 10) : 999;
+    }
+
+    function buildSearchIndexAndChapters() {
+      // Deterministic sort by chapter number then organism name
+      window.BACTERIA_DB.sort((a, b) => {
+        const diff = getChapterNum(a.chapter) - getChapterNum(b.chapter);
+        return diff !== 0 ? diff : a.name.localeCompare(b.name);
+      });
+
+      searchIndex.clear();
+      const chaptersMap = new Map();
+      for (const b of window.BACTERIA_DB) {
+        const fullText = [
+          b.name,
+          b.chapter,
+          (b.triggerWords || []).join(" "),
+          (b.tags || []).join(" "),
+          stripHtml(b.overview),
+          stripHtml(b.virulence),
+          stripHtml(b.diseases),
+          stripHtml(b.diagnosis),
+          stripHtml(b.treatment),
+          stripHtml(b.glossary)
+        ].join(" ").toLowerCase();
+        searchIndex.set(b.id, fullText);
+        chaptersMap.set(b.chapter, (chaptersMap.get(b.chapter) || 0) + 1);
+      }
+
+      const select = document.getElementById("chapter-select");
+      const sortedChapters = [...chaptersMap.entries()].sort((a, b) => getChapterNum(a[0]) - getChapterNum(b[0]));
+      select.innerHTML = `<option value="ALL">All Chapters (${sortedChapters.length})</option>` +
+        sortedChapters.map(([ch, count]) => `<option value="${ch.replace(/"/g, '&quot;')}">${ch} (${count})</option>`).join("");
+      select.value = selectedChapter;
+    }
+
+    // Dynamically load all chapter files and render cleanly once settled
     function loadAllChapters() {
-      let loaded = 0;
+      let settled = 0;
+      const onDone = () => {
+        settled++;
+        if (settled === chapterFiles.length) {
+          buildSearchIndexAndChapters();
+          render();
+        }
+      };
       chapterFiles.forEach(src => {
         const script = document.createElement("script");
         script.src = src;
-        script.onload = () => { loaded++; render(); };
-        script.onerror = () => { loaded++; if (loaded === chapterFiles.length) render(); };
+        script.onload = onDone;
+        script.onerror = onDone;
         document.head.appendChild(script);
       });
     }
@@ -227,86 +316,155 @@
       render();
     }
 
+    function setAllAccordions(expand) {
+      if (expand) filterCategories.forEach(c => openAccordions.add(c.id));
+      else openAccordions.clear();
+      render();
+    }
+
     function toggleFilter(tag) {
       if (activeFilters.has(tag)) activeFilters.delete(tag);
       else activeFilters.add(tag);
       render();
     }
 
+    function toggleSort() {
+      sortMode = sortMode === "chapter" ? "alpha" : "chapter";
+      document.getElementById("sort-btn").textContent = sortMode === "chapter" ? "Sort: Chapter" : "Sort: A–Z";
+      render();
+    }
+
+    function toggleQuizMode() {
+      quizMode = !quizMode;
+      const btn = document.getElementById("quiz-btn");
+      btn.textContent = quizMode ? "Quiz Mode: On" : "Quiz Mode: Off";
+      btn.className = quizMode
+        ? "bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400 px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+        : "bg-slate-900 hover:bg-slate-700 text-amber-300 border border-amber-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition";
+      render();
+    }
+
     function resetFilters() {
       activeFilters.clear();
       searchQuery = "";
+      filterSearchQuery = "";
+      selectedChapter = "ALL";
       selectedBacteriumId = null;
+      lastMatchCount = null;
       document.getElementById("search-input").value = "";
+      document.getElementById("filter-search-input").value = "";
+      document.getElementById("chapter-select").value = "ALL";
       render();
     }
 
     function getMatchingBacteria(testFilters = activeFilters) {
-      return window.BACTERIA_DB.filter(b => {
+      const results = window.BACTERIA_DB.filter(b => {
+        if (selectedChapter !== "ALL" && b.chapter !== selectedChapter) return false;
         const matchesTags = [...testFilters].every(tag => b.tags.includes(tag));
-        const matchesSearch = !searchQuery || 
-          b.name.toLowerCase().includes(searchQuery) ||
-          b.triggerWords.some(tw => tw.toLowerCase().includes(searchQuery)) ||
-          b.diseases.toLowerCase().includes(searchQuery) ||
-          b.tags.some(t => t.toLowerCase().includes(searchQuery));
-        return matchesTags && matchesSearch;
+        if (!matchesTags) return false;
+        if (!searchQuery) return true;
+        const indexed = searchIndex.get(b.id) || "";
+        return indexed.includes(searchQuery);
       });
+      if (sortMode === "alpha") {
+        return [...results].sort((a, b) => a.name.localeCompare(b.name));
+      }
+      return results;
     }
 
     function selectBacterium(id) {
       selectedBacteriumId = id;
-      renderDetail();
+      render();
       document.getElementById("detail-panel").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function closeDetail() {
+      selectedBacteriumId = null;
+      renderDetail();
+      // Update card highlight rings without re-triggering auto-open
+      document.querySelectorAll("[data-card-id]").forEach(el => {
+        el.classList.remove("border-teal-400", "ring-1", "ring-teal-400");
+        el.classList.add("border-slate-700");
+      });
+    }
+
+    function escJs(str) {
+      return str.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
     }
 
     function render() {
       const matching = getMatchingBacteria();
       document.getElementById("active-count").textContent = `${activeFilters.size} selected`;
       document.getElementById("match-count").textContent = matching.length;
+      document.getElementById("total-count").textContent = window.BACTERIA_DB.length ? ` / ${window.BACTERIA_DB.length}` : "";
+
+      // Clear stale detail panel if active filters removed that bacterium
+      if (selectedBacteriumId && !matching.some(b => b.id === selectedBacteriumId)) {
+        selectedBacteriumId = null;
+      }
+      // Auto-open ONLY when transitioning from != 1 match to exactly 1 match
+      if (matching.length === 1 && lastMatchCount !== 1 && !quizMode) {
+        selectedBacteriumId = matching[0].id;
+      }
+      lastMatchCount = matching.length;
 
       // Active Filter Pills
       const pillsContainer = document.getElementById("active-pills");
-      pillsContainer.innerHTML = [...activeFilters].map(tag => `
-        <button onclick="toggleFilter('${tag.replace(/'/g, "\\'")}')" class="bg-teal-500/20 border border-teal-500/40 text-teal-200 text-xs px-3 py-1 rounded-full flex items-center gap-1.5 hover:bg-teal-500/30">
+      const chapterPill = selectedChapter !== "ALL" ? `
+        <button onclick="selectedChapter='ALL'; document.getElementById('chapter-select').value='ALL'; render();" class="bg-sky-500/20 border border-sky-500/40 text-sky-200 text-xs px-3 py-1 rounded-full flex items-center gap-1.5 hover:bg-sky-500/30">
+          <span>${selectedChapter}</span>
+          <span class="font-bold">&times;</span>
+        </button>` : "";
+      pillsContainer.innerHTML = chapterPill + [...activeFilters].map(tag => `
+        <button onclick="toggleFilter('${escJs(tag)}')" class="bg-teal-500/20 border border-teal-500/40 text-teal-200 text-xs px-3 py-1 rounded-full flex items-center gap-1.5 hover:bg-teal-500/30">
           <span>${tag}</span>
-          <span class="font-bold">×</span>
+          <span class="font-bold">&times;</span>
         </button>
       `).join("");
 
       // Render 10 Collapsible Category Accordions
       const filterContainer = document.getElementById("filter-container");
+      const searchingFilters = filterSearchQuery.length > 0;
       filterContainer.innerHTML = filterCategories.map(cat => {
-        const isOpen = openAccordions.has(cat.id);
+        const visibleOpts = cat.options.filter(opt => !searchingFilters || opt.toLowerCase().includes(filterSearchQuery));
+        if (searchingFilters && visibleOpts.length === 0) return "";
+
+        const isOpen = searchingFilters || openAccordions.has(cat.id);
         const activeInCat = cat.options.filter(o => activeFilters.has(o)).length;
+
+        const buttonsHtml = visibleOpts.map(opt => {
+          const isSelected = activeFilters.has(opt);
+          const hypothetical = new Set(activeFilters);
+          hypothetical.add(opt);
+          const countIfClicked = isSelected ? matching.length : getMatchingBacteria(hypothetical).length;
+          const isViable = isSelected || countIfClicked > 0;
+
+          if (hideZeroOptions && !isViable) return "";
+
+          let btnClass = "bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500";
+          if (isSelected) btnClass = "bg-teal-600 border-teal-400 text-white font-medium shadow";
+          else if (!isViable) btnClass = "bg-slate-900/30 border-slate-800/60 text-slate-600 cursor-not-allowed";
+
+          return `
+            <button ${!isViable ? "disabled" : ""} onclick="toggleFilter('${escJs(opt)}')"
+              class="border text-xs px-2.5 py-1 rounded-lg transition flex items-center gap-1 ${btnClass}">
+              <span>${opt}</span>
+              <span class="text-[10px] opacity-70">(${countIfClicked})</span>
+            </button>
+          `;
+        }).join("");
+
         return `
           <div class="border border-slate-700/80 rounded-lg overflow-hidden bg-slate-900/40">
             <button onclick="toggleAccordion('${cat.id}')" class="w-full px-3 py-2.5 text-left flex justify-between items-center hover:bg-slate-800/80 transition">
               <span class="text-xs font-semibold text-slate-200">${cat.label}</span>
               <div class="flex items-center gap-2">
                 ${activeInCat > 0 ? `<span class="bg-teal-500 text-slate-950 text-[10px] font-bold px-1.5 py-0.5 rounded-full">${activeInCat}</span>` : ""}
-                <span class="text-slate-400 text-xs">${isOpen ? "▲" : "▼"}</span>
+                <span class="text-slate-400 text-xs">${isOpen ? "&#9650;" : "&#9660;"}</span>
               </div>
             </button>
             <div class="${isOpen ? "p-3 border-t border-slate-700/60 flex flex-wrap gap-1.5" : "hidden"}">
-              ${cat.options.map(opt => {
-                const isSelected = activeFilters.has(opt);
-                const hypothetical = new Set(activeFilters);
-                hypothetical.add(opt);
-                const countIfClicked = getMatchingBacteria(hypothetical).length;
-                const isViable = isSelected || countIfClicked > 0;
-
-                let btnClass = "bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500";
-                if (isSelected) btnClass = "bg-teal-600 border-teal-400 text-white font-medium shadow";
-                else if (!isViable) btnClass = "bg-slate-900/30 border-slate-800/60 text-slate-600 cursor-not-allowed";
-
-                return `
-                  <button ${!isViable ? "disabled" : ""} onclick="toggleFilter('${opt.replace(/'/g, "\\'")}')"
-                    class="border text-xs px-2.5 py-1 rounded-lg transition flex items-center gap-1 ${btnClass}">
-                    <span>${opt}</span>
-                    <span class="text-[10px] opacity-70">(${isSelected ? matching.length : countIfClicked})</span>
-                  </button>
-                `;
-              }).join("")}
+              ${buttonsHtml || `<span class="text-xs text-slate-500 italic">No viable options in this category.</span>`}
             </div>
           </div>
         `;
@@ -319,29 +477,30 @@
       } else if (matching.length === 0) {
         grid.innerHTML = `<div class="col-span-2 bg-slate-800 border border-slate-700 rounded-xl p-8 text-center text-slate-400">No bacteria match all selected criteria. Click a pill above to remove a filter.</div>`;
       } else {
-        grid.innerHTML = matching.map(b => `
-          <div onclick="selectBacterium('${b.id}')" 
-            class="cursor-pointer bg-slate-800 hover:bg-slate-750 border ${selectedBacteriumId === b.id ? 'border-teal-400 ring-1 ring-teal-400' : 'border-slate-700 hover:border-slate-500'} rounded-xl p-4 transition flex flex-col justify-between">
+        grid.innerHTML = matching.map((b, idx) => `
+          <div data-card-id="${b.id}" tabindex="0" role="button"
+            onclick="selectBacterium('${b.id}')"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectBacterium('${b.id}');}"
+            class="cursor-pointer bg-slate-800 hover:bg-slate-700/70 focus:outline-none focus:ring-2 focus:ring-teal-400 border ${selectedBacteriumId === b.id ? 'border-teal-400 ring-1 ring-teal-400' : 'border-slate-700 hover:border-slate-500'} rounded-xl p-4 transition flex flex-col justify-between">
             <div>
               <div class="text-[11px] text-teal-400 font-medium mb-1">${b.chapter}</div>
-              <h3 class="text-lg font-bold italic text-white mb-2">${b.name}</h3>
+              <h3 class="text-lg font-bold italic text-white mb-2">${quizMode && selectedBacteriumId !== b.id ? `Unknown Pathogen #${idx + 1} <span class="text-xs not-italic font-normal text-amber-400">(click to reveal)</span>` : b.name}</h3>
               <div class="flex flex-wrap gap-1 mb-3">
                 ${b.triggerWords.map(tw => `<span class="bg-slate-900 text-amber-300/90 border border-amber-500/20 text-[11px] px-2 py-0.5 rounded">${tw}</span>`).join("")}
               </div>
             </div>
             <div class="text-xs text-slate-400 border-t border-slate-700/60 pt-2 flex justify-between items-center">
-              <span>${b.tags.slice(0, 3).join(" • ")}</span>
-              <span class="text-teal-400 font-semibold">Open Profile →</span>
+              <span>${b.tags.slice(0, 3).join(" &bull; ")}</span>
+              <span class="text-teal-400 font-semibold">${quizMode && selectedBacteriumId !== b.id ? "Reveal &rarr;" : "Open Profile &rarr;"}</span>
             </div>
           </div>
         `).join("");
       }
 
-      if (matching.length === 1) selectedBacteriumId = matching[0].id;
       renderDetail();
     }
 
- function renderDetail() {
+    function renderDetail() {
       const panel = document.getElementById("detail-panel");
       const b = window.BACTERIA_DB.find(x => x.id === selectedBacteriumId);
       if (!b) {
@@ -350,27 +509,30 @@
       }
       panel.classList.remove("hidden");
       panel.innerHTML = `
-        <div class="flex justify-between items-start border-b border-slate-700 pb-4">
+        <div class="flex justify-between items-start gap-4 border-b border-slate-700 pb-4">
           <div>
             <span class="text-xs text-teal-400 font-semibold uppercase tracking-wider">${b.chapter}</span>
             <h2 class="text-3xl font-bold italic text-white mt-0.5">${b.name}</h2>
           </div>
-          <button onclick="selectedBacteriumId=null; renderDetail();" class="bg-slate-900 hover:bg-slate-700 text-slate-300 hover:text-white text-sm px-3 py-1.5 border border-slate-700 rounded-lg transition">Close Profile ✕</button>
+          <button onclick="closeDetail()" class="bg-slate-900 hover:bg-slate-700 text-slate-300 hover:text-white text-sm px-3 py-1.5 border border-slate-700 rounded-lg transition shrink-0">Close Profile &times;</button>
         </div>
 
         <!-- Trigger Words Banner -->
         <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3">
-          <span class="text-xs font-bold uppercase text-amber-400 block mb-1.5">High-Yield Trigger Words & Hallmarks</span>
+          <span class="text-xs font-bold uppercase text-amber-400 block mb-1.5">High-Yield Trigger Words &amp; Hallmarks</span>
           <div class="flex flex-wrap gap-1.5">
             ${b.triggerWords.map(tw => `<span class="bg-slate-900 text-amber-300 border border-amber-500/30 text-xs px-2.5 py-1 rounded font-medium">${tw}</span>`).join("")}
           </div>
         </div>
 
-        <!-- Diagnostic Path Tags -->
+        <!-- Clickable Diagnostic Path Tags -->
         <div>
-          <span class="text-xs font-semibold uppercase text-slate-400 block mb-1.5">All Viable Diagnostic Paths (Filter Tags)</span>
+          <span class="text-xs font-semibold uppercase text-slate-400 block mb-1.5">All Viable Diagnostic Paths <span class="normal-case font-normal text-slate-500">(click any tag to filter/compare)</span></span>
           <div class="flex flex-wrap gap-1.5">
-            ${b.tags.map(t => `<span class="bg-teal-500/10 border border-teal-500/30 text-teal-300 text-xs px-2.5 py-0.5 rounded-full">${t}</span>`).join("")}
+            ${b.tags.map(t => {
+              const active = activeFilters.has(t);
+              return `<button onclick="toggleFilter('${escJs(t)}')" class="${active ? 'bg-teal-600 border-teal-400 text-white font-medium' : 'bg-teal-500/10 hover:bg-teal-500/25 border-teal-500/30 text-teal-300'} border text-xs px-2.5 py-0.5 rounded-full transition">${t}</button>`;
+            }).join("")}
           </div>
         </div>
 
@@ -378,43 +540,66 @@
         <div class="space-y-4 text-sm leading-relaxed">
           ${b.overview ? `
           <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700/80">
-            <h4 class="text-sm font-bold uppercase tracking-wider text-teal-400 mb-2 border-b border-slate-800 pb-1">1. Core Identity & Physiology</h4>
+            <h4 class="text-sm font-bold uppercase tracking-wider text-teal-400 mb-2 border-b border-slate-800 pb-1">1. Core Identity &amp; Physiology</h4>
             <div class="text-slate-200 space-y-2">${b.overview}</div>
           </div>` : ""}
 
           <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700/80">
-            <h4 class="text-sm font-bold uppercase tracking-wider text-amber-400 mb-2 border-b border-slate-800 pb-1">2. Structure & Virulence Mechanisms (How It Causes Disease)</h4>
+            <h4 class="text-sm font-bold uppercase tracking-wider text-amber-400 mb-2 border-b border-slate-800 pb-1">2. Structure &amp; Virulence Mechanisms (How It Causes Disease)</h4>
             <div class="text-slate-200 space-y-2">${b.virulence}</div>
           </div>
 
           <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700/80">
-            <h4 class="text-sm font-bold uppercase tracking-wider text-rose-400 mb-2 border-b border-slate-800 pb-1">3. Clinical Syndromes & Pathophysiology</h4>
+            <h4 class="text-sm font-bold uppercase tracking-wider text-rose-400 mb-2 border-b border-slate-800 pb-1">3. Clinical Syndromes &amp; Pathophysiology</h4>
             <div class="text-slate-200 space-y-2">${b.diseases}</div>
           </div>
 
           <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700/80">
-            <h4 class="text-sm font-bold uppercase tracking-wider text-sky-400 mb-2 border-b border-slate-800 pb-1">4. Laboratory Diagnosis & Interpretation</h4>
+            <h4 class="text-sm font-bold uppercase tracking-wider text-sky-400 mb-2 border-b border-slate-800 pb-1">4. Laboratory Diagnosis &amp; Interpretation</h4>
             <div class="text-slate-200 space-y-2">${b.diagnosis}</div>
           </div>
 
           <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700/80">
-            <h4 class="text-sm font-bold uppercase tracking-wider text-emerald-400 mb-2 border-b border-slate-800 pb-1">5. Therapeutics, Resistance & Prevention</h4>
+            <h4 class="text-sm font-bold uppercase tracking-wider text-emerald-400 mb-2 border-b border-slate-800 pb-1">5. Therapeutics, Resistance &amp; Prevention</h4>
             <div class="text-slate-200 space-y-2">${b.treatment}</div>
           </div>
 
           ${b.glossary ? `
           <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700/80">
-            <h4 class="text-sm font-bold uppercase tracking-wider text-purple-400 mb-2 border-b border-slate-800 pb-1">6. Terminology & Acronym Bank</h4>
+            <h4 class="text-sm font-bold uppercase tracking-wider text-purple-400 mb-2 border-b border-slate-800 pb-1">6. Terminology &amp; Acronym Bank</h4>
             <div class="text-slate-200 space-y-1.5">${b.glossary}</div>
           </div>` : ""}
         </div>
       `;
     }
 
+    // Event Listeners & Keyboard Shortcuts
     document.getElementById("search-input").addEventListener("input", (e) => {
-      searchQuery = e.target.value.toLowerCase();
+      searchQuery = e.target.value.trim().toLowerCase();
       render();
     });
+    document.getElementById("filter-search-input").addEventListener("input", (e) => {
+      filterSearchQuery = e.target.value.trim().toLowerCase();
+      render();
+    });
+    document.getElementById("chapter-select").addEventListener("change", (e) => {
+      selectedChapter = e.target.value;
+      render();
+    });
+    document.getElementById("hide-zero-toggle").addEventListener("change", (e) => {
+      hideZeroOptions = e.target.checked;
+      render();
+    });
+    document.addEventListener("keydown", (e) => {
+      const tag = document.activeElement?.tagName;
+      if (e.key === "/" && tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+        e.preventDefault();
+        document.getElementById("search-input").focus();
+      } else if (e.key === "Escape" && selectedBacteriumId) {
+        closeDetail();
+      }
+    });
+
     loadAllChapters();
   </script>
 </body>
