@@ -109,3 +109,59 @@ window.BACTERIA_DB.push(
     `
   }
 );
+
+window.BACTERIA_DB.push(
+  {
+    id: "ureaplasma_urealyticum",
+    name: "Ureaplasma urealyticum",
+    chapter: "Ch. 32: Mycoplasma",
+    tags: [
+      "Gram-Variable / Poorly Staining", "Non-Acid-Fast", "Wall-Less / Sterols in Membrane",
+      "Coccobacilli / Tiny Pleomorphic Rods",
+      "Facultative Anaerobe", "Extracellular", "Non-Spore-Forming",
+      "Urease (+)", "Non-Motile",
+      "Eaton Agar (Fried-Egg Colonies)",
+      "IgA1 Protease",
+      "Urethritis / Cervicitis / PID", "UTI / Pyelonephritis / Staghorn Calculi", "Atypical Walking Pneumonia",
+      "Intrinsically Cephalosporin-Resistant", "Intrinsically Vancomycin-Resistant"
+    ],
+    triggerWords: [
+      "Wall-Less Mycoplasma Family (No Peptidoglycan — Beta-Lactam Resistant)", "Urease (+) (Hydrolyzes Urea for ATP)",
+      "Nongonococcal Urethritis (NGU)", "Chorioamnionitis & Premature Neonatal Pneumonia", "Kidney / Struvite Stone Association"
+    ],
+    overview: `
+      <p><b>What it is:</b> <i>Ureaplasma urealyticum</i> (and closely related <i>U. parvum</i>) belongs to the family <i>Mycoplasmataceae</i>—tiny, <b>cell-wall-less bacteria</b> whose plasma membranes contain sterols (cholesterol). Unlike <i>Mycoplasma</i> species, <i>Ureaplasma</i> uniquely possesses <b>urease</b> and hydrolyzes urea to generate an electrochemical gradient for ATP synthesis.</p>
+      <p><b>Epidemiology:</b> Commonly colonizes the lower urogenital tract of sexually active adults; transmitted sexually or vertically from mother to newborn during delivery.</p>
+    `,
+    virulence: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Urease Activity:</b> Hydrolyzes urinary urea into ammonia (NH<sub>3</sub>) and CO<sub>2</sub>, alkalinizing urine, injuring uroepithelium, and promoting precipitation of magnesium ammonium phosphate (struvite) urinary calculi.</li>
+        <li><b>IgA1 Protease &amp; Surface Antigenic Variation (MB Antigen):</b> Cleaves mucosal secretory IgA1 and varies its major surface lipopolypeptide to evade host clearance.</li>
+      </ul>
+    `,
+    diseases: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Nongonococcal Urethritis (NGU) &amp; Pyelonephritis:</b> Causes dysuria and mucopurulent urethral discharge in men (negative for <i>N. gonorrhoeae</i> and <i>C. trachomatis</i>), as well as prostatitis and upper urinary tract infections / urinary calculi.</li>
+        <li><b>Perinatal &amp; Neonatal Disease:</b> Associated with chorioamnionitis, spontaneous abortion, preterm delivery, and neonatal pneumonia / chronic lung disease (bronchopulmonary dysplasia) in very-low-birth-weight premature infants.</li>
+      </ul>
+    `,
+    diagnosis: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Microscopy Is Useless:</b> Because it lacks a peptidoglycan cell wall, <i>U. urealyticum</i> does <b>not stain on Gram stain</b>.</li>
+        <li><b>NAAT (PCR) &amp; Specialized Media:</b> Multiplex urogenital <b>NAAT/PCR</b> is the preferred diagnostic method. If cultured, it requires specialized urea- and cholesterol-supplemented media (e.g., A8 agar or 10B broth), producing tiny dark-brown granular colonies ("T-strains" / tiny colonies) with an alkaline pH shift from urea hydrolysis.</li>
+      </ul>
+    `,
+    treatment: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Intrinsic Cell-Wall Antibiotic Resistance:</b> Completely resistant to all <b>penicillins, cephalosporins, carbapenems, and vancomycin</b> (no cell wall target!), and intrinsically resistant to clindamycin.</li>
+        <li><b>First-Line Therapy:</b> <b>Doxycycline</b> (first-line for adult NGU) or a macrolide (<b>Azithromycin</b> or <b>Erythromycin</b>—drug of choice in pregnant women and neonates); fluoroquinolones (levofloxacin/moxifloxacin) are alternatives for resistant strains.</li>
+      </ul>
+    `,
+    glossary: `
+      <ul class="list-disc pl-5 space-y-1">
+        <li><b>T-Strain Mycoplasma:</b> Historical name for <i>Ureaplasma</i> referring to its "tiny" colonies on specialized urea-containing agar.</li>
+        <li><b>NGU (Nongonococcal Urethritis):</b> Urethral inflammation not caused by <i>Neisseria gonorrhoeae</i>; major causes include <i>C. trachomatis</i>, <i>M. genitalium</i>, and <i>U. urealyticum</i>.</li>
+      </ul>
+    `
+  }
+);

@@ -260,7 +260,7 @@ window.BACTERIA_DB.push(
       "Obligate Aerobe", "Obligate Intracellular", "Non-Spore-Forming",
       "Cell Culture Only",
       "Sepsis / Septic Shock",
-      "Hard Tick (Ixodes / Dermacentor / Amblyomma)", "Intrinsically Cephalosporin-Resistant"
+      "Hard Tick (Ixodes / Dermacentor / Amblyomma)", "Intrinsically Cephalosporin-Resistant", "Monocyte Morulae (HME)"
     ],
     triggerWords: [
       "Human Monocytic Ehrlichiosis (E. chaffeensis — Infects Monocytes) & Granulocytic Ehrlichiosis (E. ewingii)",
@@ -310,7 +310,7 @@ window.BACTERIA_DB.push(
       "Obligate Aerobe", "Obligate Intracellular", "Non-Spore-Forming",
       "Cell Culture Only",
       "Sepsis / Septic Shock",
-      "Hard Tick (Ixodes / Dermacentor / Amblyomma)", "Rabbits / Rodents", "Intrinsically Cephalosporin-Resistant"
+      "Hard Tick (Ixodes / Dermacentor / Amblyomma)", "Rabbits / Rodents", "Intrinsically Cephalosporin-Resistant", "Granulocyte Morulae (HGA)"
     ],
     triggerWords: [
       "Human Granulocytic Anaplasmosis (Infects Neutrophils, Eosinophils, Basophils!)",

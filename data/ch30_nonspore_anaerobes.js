@@ -255,7 +255,7 @@ window.BACTERIA_DB.push(
       "Bile Esculin Agar (Black)",
       "Polysaccharide Capsule",
       "Impetigo / Folliculitis / Abscesses", "Necrotizing Fasciitis / Gas Gangrene", "Sepsis / Septic Shock", "Watery Secretory Diarrhea", "Brain Abscess",
-      "Intrinsically Cephalosporin-Resistant"
+      "Intrinsically Cephalosporin-Resistant", "20% Bile Resistant (BBE Agar)"
     ],
     triggerWords: [
       "Most Important Anaerobic Gram-Negative Rod (#1 Anaerobe in Intraabdominal Abscesses & Bacteremia)",
@@ -391,6 +391,59 @@ window.BACTERIA_DB.push(
     glossary: `
       <ul class="list-disc pl-5 space-y-1">
         <li><b>Pigmented Oral Anaerobes:</b> <i>Porphyromonas</i> and <i>Prevotella melaninogenica</i> produce dark heme-derived pigments on blood agar and dominate oral/head-and-neck anaerobic infections.</li>
+      </ul>
+    `
+  }
+);
+
+window.BACTERIA_DB.push(
+  {
+    id: "gardnerella_vaginalis",
+    name: "Gardnerella vaginalis",
+    chapter: "Ch. 30: Non-Spore-Forming Anaerobic Bacteria",
+    tags: [
+      "Gram-Variable / Poorly Staining", "Non-Acid-Fast", "Coccobacilli / Tiny Pleomorphic Rods",
+      "Facultative Anaerobe", "Extracellular", "Non-Spore-Forming",
+      "Catalase (-)", "Oxidase (-)", "Beta-Hemolytic (Complete)", "Non-Motile",
+      "Biofilm / Slime Layer", "Cytolytic / Pore-Forming Toxin",
+      "Bacterial Vaginosis (Clue Cells)"
+    ],
+    triggerWords: [
+      "Bacterial Vaginosis (BV) — Primary Pathogen", "Clue Cells (Epithelial Cells Studded with Bacteria)",
+      "Fishy Amine Odor (Positive KOH Whiff Test)", "Vaginal pH > 4.5 & Thin Grey-White Discharge", "Gram-Variable Pleomorphic Rod"
+    ],
+    overview: `
+      <p><b>What it is:</b> <i>Gardnerella vaginalis</i> is a small, non-motile, <b>Gram-variable pleomorphic rod</b> (taxonomically possessing a thin Gram-positive–type cell wall that readily decolorizes to appear Gram-negative). Along with anaerobic partners (<i>Mobiluncus</i>, <i>Prevotella</i>, <i>Atopobium</i>), it is the hallmark organism of <b>bacterial vaginosis (BV)</b>.</p>
+      <p><b>Pathophysiology:</b> In healthy reproductive-age women, H<sub>2</sub>O<sub>2</sub>- and lactic acid–producing <i>Lactobacillus</i> species keep vaginal pH acidic (3.8–4.2). Loss of lactobacilli allows <i>G. vaginalis</i> and anaerobes to overgrow, raising vaginal pH &gt;4.5 without triggering neutrophil inflammation.</p>
+    `,
+    virulence: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Dense Polymicrobial Biofilm:</b> Adheres tightly to vaginal squamous epithelial cells (creating microscopic <b>clue cells</b>) and shelters anaerobic co-pathogens from host defenses and antimicrobials, driving high BV recurrence rates.</li>
+        <li><b>Vaginolysin (Cholesterol-Dependent Cytolysin) &amp; Sialidase:</b> Vaginolysin forms pores in human vaginal epithelial cells; sialidase degrades protective cervicovaginal mucin.</li>
+      </ul>
+    `,
+    diseases: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Bacterial Vaginosis (BV):</b> Most common cause of vaginal discharge in women of childbearing age. Presents with thin, homogeneous, grey-white discharge with a fishy amine odor (worsened after intercourse or menses) and <b>minimal vaginal erythema or itching</b> (it is a vaginosis, not a true inflammatory vaginitis).</li>
+        <li><b>Obstetric &amp; Gynecologic Complications:</b> Increases risk of preterm labor/delivery, premature rupture of membranes, chorioamnionitis, postpartum endometritis, and acquisition of STIs (HIV, <i>N. gonorrhoeae</i>, <i>C. trachomatis</i>).</li>
+      </ul>
+    `,
+    diagnosis: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Amsel Clinical Criteria (Diagnosis Requires &ge;3 of 4):</b> (1) Thin, homogeneous grey-white discharge; (2) Vaginal fluid <b>pH &gt;4.5</b>; (3) <b>Positive Whiff Test</b> (fishy amine odor released when 10% KOH is added to discharge); (4) <b>Clue cells</b> (&gt;20% of squamous epithelial cells stippled with bacteria obscuring cell borders on wet mount).</li>
+        <li><b>Gram Stain (Nugent Score — Gold Standard):</b> Shows loss of large Gram-positive <i>Lactobacillus</i> rods replaced by abundant small Gram-variable <i>G. vaginalis</i> coccobacilli and curved <i>Mobiluncus</i> rods, with <b>few or no neutrophils</b>. Culture is NOT recommended because <i>G. vaginalis</i> can colonize healthy women.</li>
+      </ul>
+    `,
+    treatment: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>First-Line Therapy:</b> Oral or intravaginal <b>Metronidazole</b> (500 mg PO twice daily for 7 days, or 0.75% gel) or intravaginal <b>Clindamycin</b> cream (2%).</li>
+        <li><b>Clinical Counseling:</b> Routine treatment of male sexual partners is generally not required to prevent recurrence, though recurrence is common due to persistent vaginal biofilms.</li>
+      </ul>
+    `,
+    glossary: `
+      <ul class="list-disc pl-5 space-y-1">
+        <li><b>Clue Cells:</b> Vaginal squamous epithelial cells heavily coated with adherent <i>G. vaginalis</i> coccobacilli, giving fuzzy, indistinct borders.</li>
+        <li><b>Whiff Test:</b> Addition of 10% potassium hydroxide (KOH) to vaginal secretions volatilizes anaerobic amines (putrescine, cadaverine, trimethylamine), releasing a fishy odor.</li>
       </ul>
     `
   }

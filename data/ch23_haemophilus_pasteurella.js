@@ -170,7 +170,7 @@ window.BACTERIA_DB.push(
       "Facultative Anaerobe", "Capnophilic (Requires CO2)", "Extracellular", "Non-Spore-Forming",
       "Non-Motile",
       "Subacute / Culture-Negative Endocarditis",
-      "Dental Procedures / Intravascular Catheters"
+      "Dental Procedures / Intravascular Catheters", "Star-Shaped Colonies"
     ],
     triggerWords: [
       "HACEK Group (Subacute Bacterial Endocarditis)", "Adherent Colonies on Blood Culture Bottle Glass",
@@ -261,6 +261,59 @@ window.BACTERIA_DB.push(
     glossary: `
       <ul class="list-disc pl-5 space-y-1">
         <li><b>Pasteurella Indole Musty Odor:</b> Distinctive musty/mousy odor of <i>P. multocida</i> colonies on blood agar due to indole production.</li>
+      </ul>
+    `
+  }
+);
+
+window.BACTERIA_DB.push(
+  {
+    id: "haemophilus_parainfluenzae",
+    name: "Haemophilus parainfluenzae",
+    chapter: "Ch. 23: Haemophilus and Related Bacteria",
+    tags: [
+      "Gram-Negative", "Non-Acid-Fast", "Coccobacilli / Tiny Pleomorphic Rods",
+      "Facultative Anaerobe", "Capnophilic (Requires CO2)", "Extracellular", "Non-Spore-Forming",
+      "Catalase (+)", "Oxidase (+)", "Gamma-Hemolytic (Non-Hemolytic)", "Non-Motile",
+      "Chocolate Agar (V Factor Only)",
+      "Subacute / Culture-Negative Endocarditis", "Epiglottitis / Otitis / Sinusitis", "Sepsis / Septic Shock",
+      "Dental Procedures / Intravascular Catheters"
+    ],
+    triggerWords: [
+      "Requires V Factor (NAD) ONLY — Does NOT Need X Factor (Hemin)", "HACEK Group Endocarditis",
+      "Oral / Oropharyngeal Commensal", "Large Friable Valve Vegetations (Emboli)", "Porphyrin Test (+)"
+    ],
+    overview: `
+      <p><b>What it is:</b> <i>Haemophilus parainfluenzae</i> is a small, pleomorphic Gram-negative coccobacillus and the most abundant <i>Haemophilus</i> species in the normal human oral cavity and oropharynx. Clinically, it is an important member of the <b>HACEK group</b> of fastidious Gram-negative endocarditis pathogens.</p>
+      <p><b>Classic Lab Distinction:</b> Unlike <i>H. influenzae</i> (requires both X and V factors) and <i>H. ducreyi</i> (requires X factor only), <i>H. parainfluenzae</i> synthesizes its own hemin and requires <b>V factor (NAD) ONLY</b>.</p>
+    `,
+    virulence: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Adherence &amp; Biofilm Formation:</b> Expresses fimbriae and outer membrane adhesins that attach to damaged endocardial surfaces and prosthetic heart valves following dental or oral mucosal trauma.</li>
+        <li><b>Endotoxin (LOS):</b> Lipooligosaccharide triggers local inflammation and systemic fever/embolization in intravascular infections.</li>
+      </ul>
+    `,
+    diseases: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Subacute Infective Endocarditis (HACEK Group):</b> Characteristically affects patients with preexisting valvular heart disease or prosthetic valves following dental procedures; produces large, friable vegetations with a high rate of <b>major systemic arterial embolization</b>.</li>
+        <li><b>Opportunistic Respiratory, Sinus &amp; Genitourinary Infections:</b> Occasional cause of acute sinusitis, otitis media, exacerbations of chronic bronchitis, brain/liver abscesses, and neonatal or urogenital infections.</li>
+      </ul>
+    `,
+    diagnosis: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Factor Requirement Testing:</b> Grows on <b>chocolate agar</b> (or blood agar with <i>S. aureus</i> satellite streak) and strictly around the <b>V-factor (NAD) disk ONLY</b>—does not require X factor (hemin) and is <b>ALA/porphyrin test positive</b> (confirms endogenous heme synthesis).</li>
+        <li><b>Blood Culture &amp; MALDI-TOF MS:</b> Modern automated blood culture systems typically detect HACEK bacteremia within 3–5 days; species identification is confirmed by MALDI-TOF MS or biochemical panels.</li>
+      </ul>
+    `,
+    treatment: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Third-Generation Cephalosporins (Drug of Choice):</b> Because beta-lactamase production is common among <i>Haemophilus</i> species, <b>IV Ceftriaxone</b> (or cefotaxime) is the standard therapy for HACEK endocarditis (typically 4 weeks for native valves, 6 weeks for prosthetic valves); fluoroquinolones (ciprofloxacin/levofloxacin) or ampicillin-sulbactam are alternatives.</li>
+      </ul>
+    `,
+    glossary: `
+      <ul class="list-disc pl-5 space-y-1">
+        <li><b>V Factor (NAD / Nicotinamide Adenine Dinucleotide):</b> Heat-labile coenzyme released from lysed RBCs in chocolate agar; solely required by <i>H. parainfluenzae</i>.</li>
+        <li><b>HACEK Group:</b> Fastidious oral Gram-negative rods causing subacute endocarditis (<i>Haemophilus</i>/<i>Aggregatibacter</i>, <i>Cardiobacterium</i>, <i>Eikenella</i>, <i>Kingella</i>).</li>
       </ul>
     `
   }

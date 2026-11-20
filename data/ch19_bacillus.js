@@ -12,8 +12,8 @@ window.BACTERIA_DB.push(
       "Catalase (+)", "Oxidase (-)", "Gamma-Hemolytic (Non-Hemolytic)", "Non-Motile",
       "Medusa Head Colonies",
       "Poly-D-Glutamic Acid Capsule", "AB Toxin: Increases cAMP", "Cytolytic / Pore-Forming Toxin",
-      "Cutaneous Eschar / Ulcer", "Typical Lobar Pneumonia", "Sepsis / Septic Shock", "Community-Acquired Meningitis",
-      "Wool / Animal Hides"
+      "Cutaneous Eschar / Ulcer", "Sepsis / Septic Shock", "Community-Acquired Meningitis",
+      "Wool / Animal Hides", "Mediastinal Widening"
     ],
     triggerWords: [
       "Spore-Forming Gram-Positive Rod (Boxcar Chains)", "Poly-D-Glutamic Acid Capsule (pXO2)",

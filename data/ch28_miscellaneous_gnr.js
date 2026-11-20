@@ -11,7 +11,7 @@ window.BACTERIA_DB.push(
       "Obligate Aerobe", "Facultative Intracellular", "Non-Spore-Forming",
       "Slow-Growing (>7 Days)",
       "Bacillary Angiomatosis", "Subacute / Culture-Negative Endocarditis", "Sepsis / Septic Shock",
-      "Cat / Dog Bite or Scratch", "Flea (Xenopsylla)"
+      "Cat / Dog Bite or Scratch", "Flea (Xenopsylla)", "AIDS / Low CD4 (<50) Risk"
     ],
     triggerWords: [
       "Cat-Scratch Disease (Benign Chronic Regional Lymphadenopathy in Children)",
@@ -480,6 +480,61 @@ window.BACTERIA_DB.push(
     glossary: `
       <ul class="list-disc pl-5 space-y-1">
         <li><b>Haverhill Fever:</b> Food- or waterborne outbreak form of <i>S. moniliformis</i> infection (clinically similar to rat-bite fever without a rodent bite).</li>
+      </ul>
+    `
+  }
+);
+
+window.BACTERIA_DB.push(
+  {
+    id: "capnocytophaga_canimorsus",
+    name: "Capnocytophaga canimorsus",
+    chapter: "Ch. 28: Miscellaneous Gram-Negative Rods",
+    tags: [
+      "Gram-Negative", "Non-Acid-Fast", "Fusiform / Spindle-Shaped Rods",
+      "Facultative Anaerobe", "Capnophilic (Requires CO2)", "Extracellular", "Non-Spore-Forming",
+      "Catalase (+)", "Oxidase (+)", "Gamma-Hemolytic (Non-Hemolytic)", "Motile",
+      "Slow-Growing (>7 Days)",
+      "Polysaccharide Capsule",
+      "Sepsis / Septic Shock", "Erysipelas / Cellulitis", "Community-Acquired Meningitis", "Subacute / Culture-Negative Endocarditis",
+      "Cat / Dog Bite or Scratch", "Asplenia / Complement Deficiency Risk", "Iron Overload / Cirrhosis Risk"
+    ],
+    triggerWords: [
+      "Dog Bite or Lick in Asplenic / Alcoholic Patient", "Fulminant Sepsis, DIC & Symmetrical Peripheral Gangrene",
+      "Fusiform Gram-Negative Rods Inside Neutrophils on Blood Smear", "Gliding Motility & Capnophilic (CO2)", "Beta-Lactam / Beta-Lactamase Inhibitor (Amoxicillin-Clavulanate)"
+    ],
+    overview: `
+      <p><b>What it is:</b> <i>Capnocytophaga canimorsus</i> (Latin <i>canis</i> = dog, <i>morsus</i> = bite) is a slow-growing, capnophilic (CO<sub>2</sub>-loving), thin fusiform Gram-negative rod with gliding motility that is part of the normal gingival flora of healthy dogs and cats.</p>
+      <p><b>High-Yield Clinical Risk Profile:</b> While healthy individuals rarely develop severe illness after a dog bite or lick over an open wound, patients with <b>asplenia (splenectomy), cirrhosis/heavy alcohol use, or iron overload</b> face fulminant, rapidly fatal septic shock (mortality 25%–30%).</p>
+    `,
+    virulence: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Polysaccharide Capsule &amp; LPS Immune Evasion:</b> Resists complement-mediated opsonization, phagocytosis, and killing by human neutrophils and macrophages; its modified LPS poorly triggers early TLR4 signaling, allowing unchecked bacterial proliferation in the bloodstream before massive late DIC erupts.</li>
+        <li><b>Sialidase (Glycan Harvesting):</b> Strips host cell-surface glycans to fuel growth and impair macrophage recognition.</li>
+      </ul>
+    `,
+    diseases: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Fulminant Post-Dog-Bite Sepsis &amp; Purpura Fulminans:</b> Presents 1–8 days after a dog bite, scratch, or even a dog licking a minor skin abrasion (often with minimal local wound inflammation!) with abrupt fever, hypotension, <b>disseminated intravascular coagulation (DIC)</b>, symmetrical peripheral gangrene, and multiorgan failure in asplenic or cirrhotic hosts.</li>
+        <li><b>Meningitis &amp; Endocarditis:</b> Less commonly presents as subacute bacterial meningitis (especially in older or alcoholic adults) or culture-negative endocarditis.</li>
+      </ul>
+    `,
+    diagnosis: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Peripheral Blood Smear (Board-Favorite Clue):</b> In overwhelming asplenic sepsis, thin <b>fusiform Gram-negative rods can be seen directly inside circulating neutrophils</b> on a routine Wright-Giemsa or buffy-coat smear!</li>
+        <li><b>Culture &amp; Biochemical Profile:</b> Slow-growing (may require 5–14 days of blood culture incubation on enriched blood/chocolate agar in 5%–10% CO<sub>2</sub>); <b>Catalase (+)</b>, <b>Oxidase (+)</b>, gliding motility (no flagella). Confirmed by MALDI-TOF MS or 16S rRNA PCR.</li>
+      </ul>
+    `,
+    treatment: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Dog-Bite Prophylaxis &amp; Mild Wounds:</b> Oral <b>Amoxicillin-Clavulanate</b> (covers <i>C. canimorsus</i>, <i>Pasteurella multocida</i>, and oral anaerobes; high-risk asplenic patients should always receive prophylaxis after dog bites).</li>
+        <li><b>Fulminant Sepsis / Meningitis:</b> Intravenous <b>beta-lactam / beta-lactamase inhibitor (Ampicillin-Sulbactam or Piperacillin-Tazobactam)</b> or a <b>carbapenem (Meropenem / Imipenem)</b>; clindamycin or doxycycline are alternatives in severe beta-lactam allergy. (Note: Aminoglycosides and aztreonam are ineffective).</li>
+      </ul>
+    `,
+    glossary: `
+      <ul class="list-disc pl-5 space-y-1">
+        <li><b>Capnophilic:</b> Thriving in elevated carbon dioxide (5%–10% CO<sub>2</sub>) atmospheres.</li>
+        <li><b>Purpura Fulminans:</b> Rapidly progressive hemorrhagic skin necrosis and DIC seen in overwhelming <i>C. canimorsus</i>, <i>N. meningitidis</i>, or <i>S. pneumoniae</i> sepsis.</li>
       </ul>
     `
   }

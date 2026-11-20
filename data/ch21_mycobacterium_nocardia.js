@@ -132,7 +132,7 @@ window.BACTERIA_DB.push(
       "Non-Motile",
       "Löwenstein-Jensen / Middlebrook Agar", "Slow-Growing (>7 Days)",
       "Mycolic Acids & Cord Factor",
-      "Cavitary / Granulomatous Lung Disease", "Sepsis / Septic Shock"
+      "Cavitary / Granulomatous Lung Disease", "Sepsis / Septic Shock", "Nonchromogen (Runyon III)", "AIDS / Low CD4 (<50) Risk"
     ],
     triggerWords: [
       "Slow-Growing Nonpigmented NTM (M. avium & M. intracellulare)",
@@ -400,7 +400,7 @@ window.BACTERIA_DB.push(
       "Salmon-Pink Colonies",
       "Mycolic Acids & Cord Factor",
       "Cavitary / Granulomatous Lung Disease", "Community-Acquired Meningitis", "Keratitis / Endophthalmitis", "Sepsis / Septic Shock",
-      "Unpasteurized Dairy / Livestock", "Intrinsically Cephalosporin-Resistant"
+      "Unpasteurized Dairy / Livestock", "Intrinsically Cephalosporin-Resistant", "AIDS / Low CD4 (<50) Risk"
     ],
     triggerWords: [
       "Weakly Acid-Fast Rod That Reverts to Cocci", "Mucoid Salmon-Pink Colonies (After ≥4 Days)",
@@ -439,6 +439,60 @@ window.BACTERIA_DB.push(
       <ul class="list-disc pl-5 space-y-1">
         <li><b>Rod-to-Coccus Cycle:</b> Morphologic transition of <i>R. equi</i> from short rods in young broth cultures to coccoid forms in mature cultures.</li>
         <li><b>Gordonia &amp; Tsukamurella:</b> Related partially acid-fast soil actinomycetes that are rare opportunistic causes of intravascular catheter-associated bacteremia.</li>
+      </ul>
+    `
+  }
+);
+
+window.BACTERIA_DB.push(
+  {
+    id: "mycobacterium_scrofulaceum",
+    name: "Mycobacterium scrofulaceum",
+    chapter: "Ch. 21: Mycobacterium and Related Acid-Fast Bacteria",
+    tags: [
+      "Gram-Variable / Poorly Staining", "Strongly Acid-Fast", "Regular / Uniform Rods", "Beaded / Cording Rods",
+      "Obligate Aerobe", "Facultative Intracellular", "Non-Spore-Forming",
+      "Catalase (+)", "Oxidase (-)", "Urease (+)", "Non-Motile",
+      "Löwenstein-Jensen / Middlebrook Agar", "Slow-Growing (>7 Days)", "Scotochromogen",
+      "Mycolic Acids & Cord Factor",
+      "Impetigo / Folliculitis / Abscesses", "Cavitary / Granulomatous Lung Disease"
+    ],
+    triggerWords: [
+      "Runyon Group II Scotochromogen (Yellow-Orange Pigment in Dark & Light)", "Pediatric Cervical Lymphadenitis (Scrofula)",
+      "Slow-Growing Acid-Fast Bacilli", "Environmental Water / Soil", "Surgical Excision Over Antibiotics"
+    ],
+    overview: `
+      <p><b>What it is:</b> <i>Mycobacterium scrofulaceum</i> is the classic clinical representative of the <b>Runyon Group II scotochromogenic nontuberculous mycobacteria (NTM)</b>—meaning its slow-growing colonies produce bright yellow-to-orange carotenoid pigment <b>both in the dark and in the light</b>.</p>
+      <p><b>Physiology &amp; Habitat:</b> Ubiquitous environmental saprophyte found in tap water, soil, and raw milk; not transmitted person-to-person.</p>
+    `,
+    virulence: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Mycolic Acid–Rich Cell Wall:</b> Confers strong acid-fastness, environmental persistence, and resistance to disinfectants and routine antibiotics.</li>
+        <li><b>Intracellular Granulomatous Inflammation:</b> Survives within macrophages in regional lymph nodes, eliciting chronic caseating or non-caseating granulomas.</li>
+      </ul>
+    `,
+    diseases: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Pediatric Cervical Lymphadenitis ("Scrofula"):</b> Classic presentation in immunocompetent children aged 1–5 years with a painless, unilateral, slowly enlarging submandibular or anterior cervical lymph node that may suppurate and form a chronic draining sinus tract (unlike tuberculous scrofula, systemic symptoms and chest X-ray abnormalities are typically absent).</li>
+        <li><b>Opportunistic Pulmonary or Disseminated Disease:</b> Uncommonly causes chronic cavitary lung disease in adults with preexisting structural lung disease or disseminated disease in severely immunocompromised hosts.</li>
+      </ul>
+    `,
+    diagnosis: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Acid-Fast Microscopy &amp; Culture:</b> Acid-fast bacilli on Ziehl-Neelsen or auramine-rhodamine stain; slow growth (&gt;7 days, often 2–4 weeks) on L&ouml;wenstein-Jensen or Middlebrook 7H10/7H11 media forming smooth, yellow-orange colonies even when incubated in complete darkness (<b>scotochromogen</b>).</li>
+        <li><b>Definitive Identification:</b> MALDI-TOF MS, nucleic acid probes, or 16S rRNA / <i>rpoB</i> gene sequencing (distinguishes it from <i>M. avium</i> complex, which is now the more common cause of pediatric NTM lymphadenitis, and from <i>M. tuberculosis</i>).</li>
+      </ul>
+    `,
+    treatment: `
+      <ul class="list-disc pl-5 space-y-1.5">
+        <li><b>Complete Surgical Excision (Treatment of Choice for Pediatric Lymphadenitis):</b> Because <i>M. scrofulaceum</i> is frequently resistant to standard antituberculous drugs (isoniazid, ethambutol), <b>complete surgical excision</b> of the involved lymph node is curative and avoids chronic fistula formation seen with simple incision and drainage.</li>
+        <li><b>Antimicrobial Therapy (When Excision Is Incomplete or Systemic):</b> Macrolide-based combination regimens (<b>clarithromycin or azithromycin</b> plus <b>rifampin</b> or <b>ethambutol</b>) guided by in vitro susceptibility testing.</li>
+      </ul>
+    `,
+    glossary: `
+      <ul class="list-disc pl-5 space-y-1">
+        <li><b>Scotochromogen (Runyon Group II):</b> Slow-growing mycobacteria that produce yellow-orange pigment in the dark as well as in the light (e.g., <i>M. scrofulaceum</i>, <i>M. gordonae</i>).</li>
+        <li><b>Scrofula:</b> Chronic mycobacterial cervical lymphadenitis (caused by <i>M. tuberculosis</i> in adults or NTM such as MAC and <i>M. scrofulaceum</i> in young children).</li>
       </ul>
     `
   }

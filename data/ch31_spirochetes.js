@@ -181,7 +181,7 @@ window.BACTERIA_DB.push(
       "Motile", "Corkscrew / Darting Motility",
       "Slow-Growing (>7 Days)",
       "Community-Acquired Meningitis", "Sepsis / Septic Shock",
-      "Rabbits / Rodents", "Fish / Shellfish / Marine Water"
+      "Rabbits / Rodents", "Fish / Shellfish / Marine Water", "Weil Disease (Jaundice + Renal Failure)"
     ],
     triggerWords: [
       "Thin Tightly Coiled Obligate Aerobic Spirochete with Hooked Ends ('Question Mark' / Shepherd's Crook)",
