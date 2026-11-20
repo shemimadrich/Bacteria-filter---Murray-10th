@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Murray's Bacteriology Navigator (v2.0)</title>
+  <title>Murray's Bacteriology Navigator (v2.1)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     // Global Database Array - Chapter files automatically plug into this!
@@ -16,31 +16,34 @@
   <header class="bg-slate-800/95 backdrop-blur border-b border-slate-700 px-6 py-4 sticky top-0 z-20 flex flex-wrap justify-between items-center gap-3 shadow-lg">
     <div>
       <h1 class="text-xl font-bold text-teal-400">Medical Bacteriology Diagnostic Navigator</h1>
-      <p class="text-xs text-slate-400">Modular Multi-Path Differential Engine (Murray's Medical Microbiology, 10th Ed.)</p>
+      <p class="text-xs text-slate-400">Modular Multi-Path Differential Engine (Murray's Medical Microbiology, 10th Ed. &bull; Ch. 17–34 + Syndromic Ch. 78–85)</p>
     </div>
-    <div class="flex flex-wrap items-center gap-2.5">
-      <div class="relative">
-        <input id="search-input" type="text" placeholder="Search bacteria, toxins, drugs... (press /)"
-          class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 w-64 sm:w-72">
-      </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <input id="search-input" type="text" placeholder="Search bacteria, toxins, drugs... (press /)"
+        class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 w-60 sm:w-68">
       <select id="chapter-select" aria-label="Filter by chapter"
-        class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 max-w-[210px]">
+        class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 max-w-[200px]">
         <option value="ALL">All Chapters (18)</option>
       </select>
       <button id="sort-btn" onclick="toggleSort()" title="Toggle sort order"
-        class="bg-slate-900 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium transition">
+        class="bg-slate-900 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1.5 rounded-lg text-xs font-medium transition">
         Sort: Chapter
       </button>
       <button id="quiz-btn" onclick="toggleQuizMode()" title="Hide organism names on cards for active recall"
-        class="bg-slate-900 hover:bg-slate-700 text-amber-300 border border-amber-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition">
+        class="bg-slate-900 hover:bg-slate-700 text-amber-300 border border-amber-500/30 px-2.5 py-1.5 rounded-lg text-xs font-medium transition">
         Quiz Mode: Off
       </button>
-      <button onclick="resetFilters()" class="bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition">
+      <button onclick="toggleSpecimenModal(true)" title="Open Murray Ch. 78–83 Specimen Collection & CSF Cheat Sheet"
+        class="bg-sky-600/20 hover:bg-sky-600/30 text-sky-300 border border-sky-500/30 px-2.5 py-1.5 rounded-lg text-xs font-medium transition">
+        Specimen Guide
+      </button>
+      <button onclick="resetFilters()" class="bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 px-2.5 py-1.5 rounded-lg text-xs font-medium transition">
         Reset All
       </button>
     </div>
   </header>
 
+  <!-- Main Workspace -->
   <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
     <!-- Left Column: Sticky Scrollable 10 Collapsible Master Categories -->
@@ -54,7 +57,7 @@
 
         <!-- Sidebar Filter Search + Quick Controls -->
         <div class="space-y-2 mb-3">
-          <input id="filter-search-input" type="text" placeholder="Find a filter option (e.g., Urease, Tick, IgA1)..."
+          <input id="filter-search-input" type="text" placeholder="Find a filter option (e.g., Urease, Bubo, Tick)..."
             class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-teal-500">
           <div class="flex items-center justify-between gap-2 text-[11px]">
             <label class="flex items-center gap-1.5 text-slate-300 cursor-pointer select-none">
@@ -73,8 +76,18 @@
       </div>
     </aside>
 
-    <!-- Right Column: Bacteria Pool & Detail View -->
+    <!-- Right Column: Clinical Presets, Bacteria Pool & Detail View -->
     <main class="lg:col-span-7 xl:col-span-8 space-y-4">
+
+      <!-- Clinical Syndrome Quick-Presets (Murray Ch. 78–85) -->
+      <section class="bg-slate-800/70 border border-slate-700/80 rounded-xl p-3.5">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Clinical Syndrome Quick-Presets (Murray Ch. 78–85)</span>
+          <span class="text-[11px] text-slate-500">1-click high-yield differentials</span>
+        </div>
+        <div id="presets-container" class="flex flex-wrap gap-1.5"></div>
+      </section>
+
       <!-- Active Filter Pills -->
       <div id="active-pills" class="flex flex-wrap gap-2 empty:hidden bg-slate-800/60 p-3 rounded-xl border border-slate-700"></div>
 
@@ -94,8 +107,64 @@
     </main>
   </div>
 
+  <!-- Specimen Collection & CSF Cheat Sheet Modal (Murray Tables 78.2, 80.2, 81, 82.3, 83.2) -->
+  <div id="specimen-modal" onclick="if(event.target===this)toggleSpecimenModal(false)"
+    class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-600 rounded-2xl max-w-4xl w-full max-h-[88vh] overflow-y-auto shadow-2xl p-6 space-y-5">
+      <div class="flex justify-between items-start gap-4 border-b border-slate-700 pb-3">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-sky-400">Murray 10th Ed. &bull; Chapters 78–83</span>
+          <h2 class="text-2xl font-bold text-white mt-0.5">Specimen Collection, Transport &amp; CSF Quick-Reference</h2>
+        </div>
+        <button onclick="toggleSpecimenModal(false)" class="bg-slate-900 hover:bg-slate-700 text-slate-300 hover:text-white text-sm px-3 py-1.5 border border-slate-700 rounded-lg transition shrink-0">Close &times;</button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed text-slate-200">
+        <!-- Blood Cultures -->
+        <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-4 space-y-1.5">
+          <h3 class="text-sm font-bold text-rose-400">1. Blood Cultures &amp; Sepsis (Ch. 78, Table 78.2)</h3>
+          <p><b>Skin Prep:</b> 70% alcohol followed by 2% chlorhexidine-alcohol (or povidone-iodine); allow to dry to prevent CoNS/<i>C. acnes</i> contamination.</p>
+          <p><b>Volume &amp; Timing:</b> Most septic patients have <b>&lt;1 organism/mL</b> (exceptions: overwhelming <i>S. pneumoniae</i>, <i>N. meningitidis</i>, <i>B. anthracis</i>). Draw <b>20 mL/set</b> (2 bottles) for adults; collect <b>2–4 sets per 24 h</b>.</p>
+          <p><b>Mycobacteria / Fungi:</b> 8–10 mL in lysis-centrifugation or dedicated mycobacterial media.</p>
+        </div>
+
+        <!-- Lower Respiratory -->
+        <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-4 space-y-1.5">
+          <h3 class="text-sm font-bold text-teal-400">2. Respiratory Specimens (Ch. 79–80, Table 80.2)</h3>
+          <p><b>Expectorated Sputum:</b> Deep cough into sterile cup (1–2 mL routine; <b>&ge;10 mL for mycobacteria/fungi</b>). <b>NEVER refrigerate/freeze</b> (cold kills <i>S. pneumoniae</i>) and <b>NEVER use expectorated sputum for anaerobes</b> (oral flora contamination).</p>
+          <p><b>Anaerobic Lung Culture:</b> Requires a <b>protected specimen brush / bronchoscopy</b> or direct pleural aspirate placed into an anaerobic transport tube.</p>
+        </div>
+
+        <!-- CSF Patterns -->
+        <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-4 space-y-1.5">
+          <h3 class="text-sm font-bold text-amber-400">3. CSF Meningitis Patterns (Ch. 81)</h3>
+          <ul class="list-disc pl-4 space-y-1">
+            <li><b>Bacterial Meningitis:</b> High WBC (<b>neutrophil predominance</b>), <b>elevated protein</b>, <b>low glucose</b> (Gram stain, culture, multiplex PCR).</li>
+            <li><b>Fungal / TB Meningitis:</b> Mononuclear/lymphocytic cells, mildly-to-markedly elevated protein, <b>low glucose</b>.</li>
+            <li><b>Viral (Aseptic) Meningitis:</b> Lymphocytic predominance, elevated protein, <b>normal glucose</b>.</li>
+            <li><b>Subdural Empyema / Brain Abscess:</b> Diagnose by CT/MRI—<b>avoid lumbar puncture</b> (risk of cerebral herniation!).</li>
+          </ul>
+        </div>
+
+        <!-- Genitourinary -->
+        <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-4 space-y-1.5">
+          <h3 class="text-sm font-bold text-purple-400">4. Urine &amp; Genital Specimens (Ch. 82, Table 82.3)</h3>
+          <p><b>UTI (Cystitis / Pyelonephritis):</b> <b>Midstream clean-catch</b> (discard first void to avoid urethral flora); transport immediately, refrigerate, or use preservative so colony counts don't falsely rise.</p>
+          <p><b>Urethritis (<i>N. gonorrhoeae</i>, <i>C. trachomatis</i>, <i>M. genitalium</i>):</b> Use <b>FIRST-VOID urine</b> (do NOT discard first portion!) or urethral/endocervical swab for <b>NAAT</b>.</p>
+          <p><b>Genital Ulcers:</b> Syphilis &rarr; bedside darkfield microscopy or serology; <i>H. ducreyi</i> &rarr; notify lab for slow culture; <i>K. granulomatis</i> &rarr; microscopy (unculturable).</p>
+        </div>
+
+        <!-- Gastrointestinal -->
+        <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-4 space-y-1.5 md:col-span-2">
+          <h3 class="text-sm font-bold text-emerald-400">5. Gastrointestinal Specimens (Ch. 83, Table 83.2)</h3>
+          <p><b>Stool Culture &amp; Multiplex PCR:</b> Collect liquid/bloody stool in a clean dry container and transport at room temperature within <b>1 hour</b>—or transfer to <b>Cary-Blair holding medium</b> (stable up to 72 h). Avoid rectal swabs except in infants/children. Note: NAAT and stool antigen tests cannot be run on O&amp;P preservative vials. <b>Abdominal/Peritoneal/Bile Fluids:</b> Percutaneous aspirate into a <b>sterile anaerobic transport system</b>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // 10-Category Master Taxonomy (v2.0 — 227 options, 100% active, 0 subset overlaps)
+    // 10-Category Master Taxonomy (v2.1 — 233 options, 100% active, 0 subset overlaps)
     const filterCategories = [
       {
         id: "cat1",
@@ -189,10 +258,12 @@
         label: "9. Clinical Syndromes (Organ Systems)",
         options: [
           "Impetigo / Folliculitis / Abscesses", "Erysipelas / Cellulitis", "Necrotizing Fasciitis / Gas Gangrene",
-          "Scalded Skin Syndrome (SSSS)", "Cutaneous Eschar / Ulcer", "Erythema Migrans", "Rash on Palms & Soles", "Osteomyelitis / Septic Arthritis",
+          "Scalded Skin Syndrome (SSSS)", "Cutaneous Eschar / Ulcer", "Erythema Migrans", "Rash on Palms & Soles",
+          "Osteomyelitis / Septic Arthritis", "Reactive Arthritis (Reiter Syndrome)",
           "Pharyngitis / Scarlet Fever", "Diphtheria Pseudomembrane", "Epiglottitis / Otitis / Sinusitis", "Typical Lobar Pneumonia",
           "Atypical Walking Pneumonia", "Cavitary / Granulomatous Lung Disease", "Mediastinal Widening", "Paroxysmal Whooping Cough", "CF / Ventilator Pneumonia",
-          "Sepsis / Septic Shock", "Acute Endocarditis", "Subacute / Culture-Negative Endocarditis", "Relapsing / Undulant Fever",
+          "Sepsis / Septic Shock", "Acute Endocarditis", "Subacute / Culture-Negative Endocarditis", "Myocarditis / Pericarditis",
+          "Septic Thrombophlebitis (Lemierre)", "Relapsing / Undulant Fever", "Lymphadenopathy / Bubo",
           "Weil Disease (Jaundice + Renal Failure)", "Rheumatic Fever / PSGN", "Bacillary Angiomatosis", "Neonatal Meningitis", "Community-Acquired Meningitis",
           "Brain Abscess", "Spastic Paralysis / Tetanus", "Flaccid Paralysis / Botulism", "Neurosyphilis",
           "Rapid-Onset Vomiting", "Watery Secretory Diarrhea", "Inflammatory / Bloody Dysentery", "Pseudomembranous Colitis",
@@ -209,10 +280,25 @@
           "Cat / Dog Bite or Scratch", "Unpasteurized Dairy / Livestock", "Wool / Animal Hides", "Rabbits / Rodents", "Birds / Parrots",
           "Poultry / Eggs / Reptiles", "Fish / Shellfish / Marine Water", "Armadillos", "Reheated Rice", "Canned Goods / Honey",
           "Undercooked Ground Beef", "Deli Meats / Soft Cheese", "Cooling Towers / Showers / AC", "Hot Tubs / Burn Wounds / Contact Lenses",
-          "Dental Procedures / Intravascular Catheters", "Asplenia / Complement Deficiency Risk", "CGD Patient Risk",
-          "AIDS / Low CD4 (<50) Risk", "Iron Overload / Cirrhosis Risk", "Colon Cancer Association", "Intrinsically Cephalosporin-Resistant", "Intrinsically Vancomycin-Resistant"
+          "Dental Procedures / Intravascular Catheters", "Transfusion-Associated Sepsis", "Alcoholism / Aspiration Risk",
+          "Asplenia / Complement Deficiency Risk", "CGD Patient Risk", "AIDS / Low CD4 (<50) Risk",
+          "Iron Overload / Cirrhosis Risk", "Colon Cancer Association", "Intrinsically Cephalosporin-Resistant", "Intrinsically Vancomycin-Resistant"
         ]
       }
+    ];
+
+    // 1-Click Clinical Syndrome Quick-Presets (Murray Ch. 78–85)
+    const clinicalPresets = [
+      { label: "Colorectal Cancer Bacteremia", tags: ["Colon Cancer Association"] },
+      { label: "Struvite Stone UTIs", tags: ["Urease (+)", "UTI / Pyelonephritis / Staghorn Calculi"] },
+      { label: "Culture-Negative Endocarditis", tags: ["Subacute / Culture-Negative Endocarditis"] },
+      { label: "Reactive Arthritis (Reiter)", tags: ["Reactive Arthritis (Reiter Syndrome)"] },
+      { label: "Dog / Cat Bite Wounds", tags: ["Cat / Dog Bite or Scratch"] },
+      { label: "Neonatal Meningitis", tags: ["Neonatal Meningitis"] },
+      { label: "Alcoholism / Aspiration", tags: ["Alcoholism / Aspiration Risk"] },
+      { label: "Transfusion Sepsis", tags: ["Transfusion-Associated Sepsis"] },
+      { label: "Bubo / Painful Adenitis", tags: ["Lymphadenopathy / Bubo"] },
+      { label: "Endophthalmitis / Keratitis", tags: ["Keratitis / Endophthalmitis"] }
     ];
 
     // List of Chapter Block Files (Mainframe automatically loads any file present here)
@@ -259,7 +345,6 @@
     }
 
     function buildSearchIndexAndChapters() {
-      // Deterministic sort by chapter number then organism name
       window.BACTERIA_DB.sort((a, b) => {
         const diff = getChapterNum(a.chapter) - getChapterNum(b.chapter);
         return diff !== 0 ? diff : a.name.localeCompare(b.name);
@@ -291,13 +376,13 @@
       select.value = selectedChapter;
     }
 
-    // Dynamically load all chapter files and render cleanly once settled
     function loadAllChapters() {
       let settled = 0;
       const onDone = () => {
         settled++;
         if (settled === chapterFiles.length) {
           buildSearchIndexAndChapters();
+          renderPresets();
           render();
         }
       };
@@ -308,6 +393,35 @@
         script.onerror = onDone;
         document.head.appendChild(script);
       });
+    }
+
+    function applyPreset(idx) {
+      const preset = clinicalPresets[idx];
+      if (!preset) return;
+      activeFilters = new Set(preset.tags);
+      selectedChapter = "ALL";
+      searchQuery = "";
+      selectedBacteriumId = null;
+      lastMatchCount = null;
+      document.getElementById("chapter-select").value = "ALL";
+      document.getElementById("search-input").value = "";
+      render();
+    }
+
+    function renderPresets() {
+      const container = document.getElementById("presets-container");
+      container.innerHTML = clinicalPresets.map((p, i) => `
+        <button onclick="applyPreset(${i})"
+          class="bg-slate-900 hover:bg-teal-600/20 border border-slate-700 hover:border-teal-500/50 text-slate-300 hover:text-teal-200 text-xs px-2.5 py-1 rounded-lg transition">
+          ${p.label}
+        </button>
+      `).join("");
+    }
+
+    function toggleSpecimenModal(open) {
+      const modal = document.getElementById("specimen-modal");
+      if (open) modal.classList.remove("hidden");
+      else modal.classList.add("hidden");
     }
 
     function toggleAccordion(catId) {
@@ -339,8 +453,8 @@
       const btn = document.getElementById("quiz-btn");
       btn.textContent = quizMode ? "Quiz Mode: On" : "Quiz Mode: Off";
       btn.className = quizMode
-        ? "bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400 px-3 py-1.5 rounded-lg text-xs font-semibold transition"
-        : "bg-slate-900 hover:bg-slate-700 text-amber-300 border border-amber-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition";
+        ? "bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition"
+        : "bg-slate-900 hover:bg-slate-700 text-amber-300 border border-amber-500/30 px-2.5 py-1.5 rounded-lg text-xs font-medium transition";
       render();
     }
 
@@ -381,7 +495,6 @@
     function closeDetail() {
       selectedBacteriumId = null;
       renderDetail();
-      // Update card highlight rings without re-triggering auto-open
       document.querySelectorAll("[data-card-id]").forEach(el => {
         el.classList.remove("border-teal-400", "ring-1", "ring-teal-400");
         el.classList.add("border-slate-700");
@@ -398,11 +511,9 @@
       document.getElementById("match-count").textContent = matching.length;
       document.getElementById("total-count").textContent = window.BACTERIA_DB.length ? ` / ${window.BACTERIA_DB.length}` : "";
 
-      // Clear stale detail panel if active filters removed that bacterium
       if (selectedBacteriumId && !matching.some(b => b.id === selectedBacteriumId)) {
         selectedBacteriumId = null;
       }
-      // Auto-open ONLY when transitioning from != 1 match to exactly 1 match
       if (matching.length === 1 && lastMatchCount !== 1 && !quizMode) {
         selectedBacteriumId = matching[0].id;
       }
@@ -595,8 +706,10 @@
       if (e.key === "/" && tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
         e.preventDefault();
         document.getElementById("search-input").focus();
-      } else if (e.key === "Escape" && selectedBacteriumId) {
-        closeDetail();
+      } else if (e.key === "Escape") {
+        const modal = document.getElementById("specimen-modal");
+        if (!modal.classList.contains("hidden")) toggleSpecimenModal(false);
+        else if (selectedBacteriumId) closeDetail();
       }
     });
 
